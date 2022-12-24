@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "31200754817",
+    "project_id": "ai1-clubs-lustr2ng3rs",
+    "storage_bucket": "ai1-clubs-lustr2ng3rs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31200754817:android:0a41d1f90e378801a26180",
+        "android_client_info": {
+          "package_name": "com.lu_strangers.ai1_clubs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "31200754817-p2vluj233r0r8aeg00bojdl83ckcodcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lu_strangers.ai1_clubs",
+            "certificate_hash": "b4f5d975868f4e73700d1e0d86d6a010ae199888"
+          }
+        },
+        {
+          "client_id": "31200754817-nokvj8smnp4ucmsna0i3b0mfqh0ssq56.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1sdESGfq1-GAEwKyh8gKOVTa7R28oyR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "31200754817-nokvj8smnp4ucmsna0i3b0mfqh0ssq56.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
