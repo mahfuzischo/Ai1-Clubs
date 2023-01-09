@@ -1,4 +1,5 @@
 import 'package:ai1_clubs/screens/log_in.dart';
+import 'package:ai1_clubs/screens/registrationphn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/screens/home.dart';

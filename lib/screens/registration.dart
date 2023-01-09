@@ -1,5 +1,6 @@
 import 'package:ai1_clubs/screens/log_in.dart';
 import 'package:ai1_clubs/screens/log_in2.dart';
+import 'package:ai1_clubs/screens/phoneReg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -41,6 +42,14 @@ class _validateFormRemailState extends State<validateFormRemail> {
   final _emailController = TextEditingController();
   final _unameController = TextEditingController();
   final _passController = TextEditingController();
+  void ShowSnackBarText(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+      ),
+    );
+  }
+
   String _pass = '';
   String _uname = '';
   String _cpass = '';
@@ -198,35 +207,43 @@ class _validateFormRemailState extends State<validateFormRemail> {
               _uname = _unameController.text;
               if (_formKey.currentState != null) {
                 if (_formKey.currentState!.validate() != false) {
-                  FirebaseAuth auth = FirebaseAuth.instance;
-                  print(_uname);
-                  print(_uemail);
-                  print(_pass);
-                  // User? user;
-
-                  //   try {
-                  UserCredential userCredential =
-                      await auth.createUserWithEmailAndPassword(
-                    email: _uemail,
-                    password: _pass,
-                  );
-                  var usr = userCredential.user;
-
-                  CollectionReference users =
-                      FirebaseFirestore.instance.collection('mailUsers');
-
-                  Future<void> addUser() {
-                    // Call the user's CollectionReference to add a new user
-                    return users
-                        .add({
-                          'Username': _uname, // John Doe
-                          'Email': _uemail, // Stokes and Sons
-                          'Pass': _pass // 42
-                        })
-                        .then((value) => print("User Added"))
-                        .catchError(
-                            (error) => print("Failed to add user: $error"));
+                  FirebaseAuth _auth = FirebaseAuth.instance;
+                  FirebaseFirestore _firebaseFirestore =
+                      FirebaseFirestore.instance;
+                  dynamic _userRef = FirebaseFirestore.instance
+                      .collection('mailUsers')
+                      .doc(_uemail);
+                  dynamic _x = await _userRef.get();
+                  if (!_x.exists) {
                     try {
+                      UserCredential userCredential =
+                          await _auth.createUserWithEmailAndPassword(
+                        email: _uemail,
+                        password: _pass,
+                      );
+
+                      print(_uname);
+                      print(_uemail);
+                      print(_pass);
+
+                      User? _user = _auth.currentUser;
+
+                      var _userMap = {
+                        'uid': _user!.uid,
+                        'userName': _uname,
+                        'email': _user.email,
+                      };
+                      print(_userMap);
+
+                      await _firebaseFirestore
+                          .collection('mailUsers')
+                          .doc(_user.email)
+                          .set(_userMap);
+
+                      print(_uname);
+                      print(_uemail);
+                      print(_pass);
+
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (BuildContext context) {
                         return logIn();
@@ -235,31 +252,16 @@ class _validateFormRemailState extends State<validateFormRemail> {
                       });
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
-                        print('No user found for that email.');
+                        ShowSnackBarText('No user found for that email.');
                       } else if (e.code == 'wrong-password') {
-                        print('Wrong password provided.');
+                        ShowSnackBarText('Wrong password provided.');
+                      } else if (e.code == 'email-already-in-use') {
+                        ShowSnackBarText("Email already registerd!");
                       }
                     }
+                  } else {
+                    ShowSnackBarText("Email already registered!");
                   }
-
-                  /*Future addUsers(
-                        String Username, String Email, String Pass) async {
-                      final docuser = await FirebaseFirestore.instance
-                          .collection('mailUsers')
-                          .doc('$Email');
-                      final user = {
-                        'Username': Username,
-                        'Email': Email,
-                        'Pass': Pass,
-                      };
-                    }
-
-                    addUsers(_uname, _uemail, _pass);
-*/
-
-                  print(_uname);
-                  print(_uemail);
-                  print(_pass);
                 }
               }
             },
