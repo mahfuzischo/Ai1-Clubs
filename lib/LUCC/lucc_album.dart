@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -15,7 +14,26 @@ class lucc_album extends StatefulWidget {
   State<lucc_album> createState() => _lucc_albumState();
 }
 
-class _lucc_albumState extends State<lucc_album> {
+class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
+  void initState() {
+    controller = AnimationController(
+      /// [AnimationController]s can be created with `vsync: this` because of
+      /// [TickerProviderStateMixin].
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..addListener(() {
+        setState(() {});
+      });
+    controller.repeat(reverse: true);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   final storage = FirebaseStorage.instance;
   int x = 0;
   int y = 0;
@@ -38,7 +56,7 @@ class _lucc_albumState extends State<lucc_album> {
     );
   }
 
-  listFiles() async {
+  Future<void> listFiles() async {
     final storageRef = FirebaseStorage.instance.ref("lucc_album/");
     final listResult = await storageRef.listAll();
     String ss = listResult.toString();
@@ -48,21 +66,18 @@ class _lucc_albumState extends State<lucc_album> {
         x++;
       }
     }
+    print(x);
     y = x;
+    x = 0;
   }
 
   /* Future<void> _reload(bool reload) async {
     await getWidget().;
   }*/
 
-  void initState() {
-    super.initState();
-    // _reload(true);
-  }
-
   Future<void> uploadFile(String filepath, String filename) async {
     File file = File(filepath);
-    int z = x + 1;
+    int z = y + 1;
     try {
       await storage.ref('lucc_album/lucc_img$z)').putFile(file);
     } on FirebaseException catch (e) {
@@ -89,27 +104,36 @@ class _lucc_albumState extends State<lucc_album> {
     }
   }
 */
-  pushImg() async {
-    for (var i = 0; i < x; i++) {
-      String s = 'lucc_album/lucc_img$i.jpg';
+  Future pushImg() async {
+    for (var i = 0; i <= y; i++) {
+      int k = i;
+      String f = i.toString();
+      String s = 'lucc_album/lucc_img$f.jpg';
+
       print(s);
-      /*  final List<Image> myImages = [
+
+      /* List<Image> lucc_imglist = [
         Image(
           image: NetworkImage(
               await storage.ref('lucc_album/lucc_img$s.jpg').getDownloadURL()),
           fit: BoxFit.cover,
         ),
-      ];*/
-
+      ]*/
+      if (y == k) {
+        break;
+      }
       lucc_imgList.add(Image(
         image: NetworkImage(
-          await storage.ref('lucc_album/lucc_img1.jpg').getDownloadURL(),
+          await storage.ref(s).getDownloadURL(),
         ),
         fit: BoxFit.cover,
       ));
     }
   }
 
+  late AnimationController controller;
+
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,12 +163,33 @@ class _lucc_albumState extends State<lucc_album> {
                 uploadFile(path, fileName);
               },
             ),
+            IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.refresh,
+                  color: Colors.white70,
+                ))
           ],
           backgroundColor: Colors.purple[300],
           elevation: 0,
         ),
-        body:
-            getWidget() /*RefreshIndicator(
+        body: gg()
+        /*Column(
+          children: [
+            
+            if (lucc_imgList.length != 0) ...[
+              getWidget()
+            ] else ...[
+              Center(
+                child: CircularProgressIndicator(
+                  value: controller.value,
+                  semanticsLabel: 'Circular progress indicator',
+                ),
+              )
+            ]
+          ],
+        )*/
+        /*RefreshIndicator(
             onRefresh: () async {
               getWidget();
             },
@@ -192,20 +237,18 @@ class _lucc_albumState extends State<lucc_album> {
     listFiles();
     print('URL : ');
     print(downloadURL('1'));
-    if (x > 0) {
-      // lucc_images();
-      //lucc_print();
-      pushImg();
 
-      return GridView.count(
-        crossAxisCount: 3,
-        mainAxisSpacing: 5,
-        crossAxisSpacing: 5,
-        children: [...lucc_imgList],
-      );
-    } else {
-      return Center(child: CircularProgressIndicator());
-    }
-    return Text('Fuck you!!!');
+    // lucc_images();
+    //lucc_print();
+    pushImg();
+
+    return GridView.count(
+      crossAxisCount: 3,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      children: [...lucc_imgList],
+    );
+
+    //  return Text('Fuck you!!!');
   }
 }

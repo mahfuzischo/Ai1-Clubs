@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/LUCC/lucc_album.dart';
+import 'package:ai1_clubs/LUCC/news_feed.dart';
 
 class LUCC_Home extends StatefulWidget {
   const LUCC_Home({super.key});
@@ -28,7 +29,10 @@ class _LUCC_HomeState extends State<LUCC_Home> {
               height: 70,
               width: 230,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => newsFeed()));
+                },
                 icon: Icon(
                   Icons.add,
                   size: 25,

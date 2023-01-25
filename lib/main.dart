@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
             } else if (FirebaseAuth.instance.currentUser == null) {
               return logIn();
             } else {
-              return Text("Somthing went wrong...");
+              return Text("Something went wrong...");
             }
           }),
         ));

@@ -103,10 +103,15 @@ class _validateFormRemailState extends State<validateFormRemail> {
             padding: EdgeInsets.fromLTRB(30, 30, 10, 0),
             child: TextFormField(
               validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    !value.contains('@gmail')) {
-                  return "Invalid input or email";
+                if (value != null) {
+                  final RegExp regex = RegExp(
+                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)| (\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                  if (!regex.hasMatch(value!)) {
+                    return 'Enter a valid email';
+                  } else
+                    return null;
+                } else {
+                  return 'Enter a valid email';
                 }
               },
               controller: _emailController,
