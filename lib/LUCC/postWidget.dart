@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:ai1_clubs/screens/registration.dart';
 import 'package:intl/intl.dart';
 import 'package:ai1_clubs/LUCC/comments.dart';
-import 'package:ai1_clubs/userData.dart';
-import 'package:ai1_clubs/postData.dart';
+import 'package:ai1_clubs/userData.dart' as model;
+import 'package:ai1_clubs/postData.dart' as model;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,6 +39,7 @@ class _postWidgetState extends State<postWidget> {
   final FirebaseFirestore _fire = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String userName = '';
+  int commentLen = 0;
 
   Future<String> deletePost(String postId) async {
     String res = "Some error occurred";
@@ -51,26 +52,39 @@ class _postWidgetState extends State<postWidget> {
     return res;
   }
 
-  int commentLen = 0;
-
-  Future getUserDetails() async {
-    dynamic mail = _auth.currentUser!.email;
-    var collection = _fire.collection('Users');
-    var docSnapshot = await collection.doc(mail).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-      var value = data?['userName'];
-      userName = value;
-      print(userName);
-      return userName;
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    // fetchCommentLen();
+    getCommentLen();
   }
+
+  getCommentLen() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+      commentLen = snap.docs.length;
+    } catch (e) {
+      ShowSnackBarText(
+        e.toString(),
+      );
+    }
+  }
+
+  // Future getUserDetails() async {
+  //   dynamic Uid = _auth.currentUser!.uid;
+  //   var collection = _fire.collection('Users');
+  //   var docSnapshot = await collection.doc(Uid).get();
+  //   if (docSnapshot.exists) {
+  //     Map<String, dynamic>? data = docSnapshot.data();
+  //     var value = data?['userName'];
+  //     userName = value;
+  //     print(userName);
+  //     return userName;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -215,6 +229,20 @@ class _postWidgetState extends State<postWidget> {
                     ),
                   ),
                 ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                  ),
+                  child: Text(
+                    DateFormat.yMMMd()
+                        .format(widget.snap['datePublished'].toDate()),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  //   padding: const EdgeInsets.symmetric(vertical: 4),
+                ),
                 InkWell(
                   child: Container(
                     child: Text(
@@ -234,16 +262,6 @@ class _postWidgetState extends State<postWidget> {
                     ),
                   ),
                 ),
-                // Container(
-                //   child: Text(
-                //     DateFormat.yMMMd()
-                //         .format(widget.snap['datePublished'].toDate()),
-                //     style: const TextStyle(
-                //       color: Colors.grey,
-                //     ),
-                //   ),
-                //   padding: const EdgeInsets.symmetric(vertical: 4),
-                // ),
               ],
             ),
           )

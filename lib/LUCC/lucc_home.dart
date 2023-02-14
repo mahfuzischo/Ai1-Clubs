@@ -1,3 +1,4 @@
+import 'package:ai1_clubs/LUCC/newsFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/LUCC/lucc_album.dart';
 import 'package:ai1_clubs/LUCC/news_feed.dart';
@@ -31,21 +32,21 @@ class _LUCC_HomeState extends State<LUCC_Home> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => newsFeed()));
+                      MaterialPageRoute(builder: (context) => FeedScreen()));
                 },
                 icon: Icon(
                   Icons.add,
                   size: 25,
                 ),
                 label: Text(
-                  'Create Post',
+                  'Posts',
                   style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.bold,
                       fontSize: 25),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.purple[300], // Background color
+                  primary: Colors.purple[200], // Background color
                   onPrimary: Colors.grey[400],
 
                   //splashFactory: Colors.grey[200],

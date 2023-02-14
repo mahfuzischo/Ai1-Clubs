@@ -50,6 +50,14 @@ class validForm extends StatefulWidget {
 }
 
 class _validFormState extends State<validForm> {
+  void ShowSnackBarText(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+      ),
+    );
+  }
+
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   String pass = '';
@@ -212,16 +220,16 @@ class _validFormState extends State<validForm> {
                   } on FirebaseAuthException catch (e) {
                     print(e.toString());
                     if (e.code == 'user-not-found') {
-                      print('No user found for that email.');
+                      ShowSnackBarText('No user found for that email.');
                     } else if (e.code == 'wrong-password') {
-                      print('Wrong password provided.');
+                      ShowSnackBarText('Wrong password provided.');
                     }
                   }
                 } else {
-                  print("Validation failed");
+                  ShowSnackBarText("Validation failed");
                 }
               } else {
-                print("Current user : Null");
+                ShowSnackBarText("Current user : Null");
               }
             },
 

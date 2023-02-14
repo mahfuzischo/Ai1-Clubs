@@ -4,13 +4,13 @@ class User {
   final String email;
   final String uid;
   final String photoUrl;
-  final String username;
+  final String userName;
   final String batch;
   final String dept;
   final String student_id;
 
   const User({
-    required this.username,
+    required this.userName,
     required this.uid,
     required this.photoUrl,
     required this.email,
@@ -23,20 +23,20 @@ class User {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return User(
-        username: snapshot["username"],
+        userName: snapshot["userName"],
         uid: snapshot["uid"],
         email: snapshot["email"],
-        photoUrl: snapshot["photoUrl"],
+        photoUrl: snapshot["photoURL"],
         dept: snapshot["dept"],
         batch: snapshot["batch"],
         student_id: snapshot["student_id"]);
   }
 
   Map<String, dynamic> toJson() => {
-        "username": username,
+        "userName": userName,
         "uid": uid,
         "email": email,
-        "photoUrl": photoUrl,
+        "photoURL": photoUrl,
         "dept": dept,
         "batch": batch,
         "student_id": student_id,

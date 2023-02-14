@@ -1,10 +1,10 @@
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'dart:io';
 
 class lucc_album extends StatefulWidget {
@@ -15,6 +15,10 @@ class lucc_album extends StatefulWidget {
 }
 
 class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
+  Future<void> refresh() async {
+    return await Future.delayed(Duration(seconds: 8));
+  }
+
   void initState() {
     controller = AnimationController(
       /// [AnimationController]s can be created with `vsync: this` because of
@@ -67,7 +71,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
       }
     }
     print(x);
-    y = x;
+    y = y + x;
     x = 0;
   }
 
@@ -173,7 +177,15 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
           backgroundColor: Colors.purple[300],
           elevation: 0,
         ),
-        body: gg()
+        body: LiquidPullToRefresh(
+          animSpeedFactor: 5,
+          child: gg(),
+          onRefresh: refresh,
+          height: 250,
+          backgroundColor: Colors.purple[300],
+          color: Colors.orange[200],
+          showChildOpacityTransition: true,
+        )
         /*Column(
           children: [
             

@@ -2,19 +2,95 @@ import 'package:ai1_clubs/screens/log_in.dart';
 import 'package:ai1_clubs/screens/log_in2.dart';
 import 'package:ai1_clubs/screens/phoneReg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/screens/home.dart';
 import 'package:ai1_clubs/screens/registrationphn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class registration extends StatefulWidget {
   @override
   State<registration> createState() => _registrationState();
 }
 
+final imagePicker = ImagePicker();
+final FirebaseFirestore fire = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final FirebaseStorage _storage = FirebaseStorage.instance;
+File? img;
+
+Future<String> uploadImg(File file) async {
+  String _picname = const Uuid().v1();
+  Reference ref = _storage
+      .ref()
+      .child("profiles")
+      .child(_auth.currentUser!.uid)
+      .child(_picname);
+  UploadTask uploadTask = ref.putFile(file);
+  TaskSnapshot snap = await uploadTask;
+  String dldURL = await snap.ref.getDownloadURL();
+  print("photourl:" + dldURL);
+  return dldURL;
+}
+
 class _registrationState extends State<registration> {
+  uploadProfile(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: const Text("Select profile picture"),
+            children: [
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(30),
+                child: const Text("Take a photo"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+
+                  final image =
+                      await imagePicker.getImage(source: ImageSource.camera);
+                  setState(() {
+                    if (image != null) {
+                      img = File(image.path);
+                    } else
+                      print("No image selected!!!");
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(30),
+                child: const Text("Choose from gallery"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+
+                  final image =
+                      await imagePicker.getImage(source: ImageSource.gallery);
+                  setState(() {
+                    if (image != null) {
+                      img = File(image.path);
+                    } else {}
+                    print("No image selected!!!");
+                  });
+                },
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(30),
+                child: const Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +104,43 @@ class _registrationState extends State<registration> {
               fontSize: 30, fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
       ),
-      body: validateFormRemail(),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          SizedBox(
+            height: 15,
+          ),
+          Stack(
+            children: [
+              img != null
+                  ? CircleAvatar(
+                      radius: 40,
+                      backgroundImage: FileImage(img!),
+                      backgroundColor: Colors.red,
+                    )
+                  : const CircleAvatar(
+                      radius: 64,
+                      backgroundImage:
+                          NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
+                      backgroundColor: Colors.red,
+                    ),
+              Positioned(
+                bottom: -10,
+                left: 80,
+                child: IconButton(
+                  onPressed: () {
+                    uploadProfile(context);
+                  },
+                  icon: const Icon(Icons.add_a_photo),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          validateFormRemail()
+        ]),
+      ),
     );
   }
 }
@@ -42,6 +154,10 @@ class _validateFormRemailState extends State<validateFormRemail> {
   final _emailController = TextEditingController();
   final _unameController = TextEditingController();
   final _passController = TextEditingController();
+  final _deptController = TextEditingController();
+  final _batchController = TextEditingController();
+  final _idController = TextEditingController();
+
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -54,6 +170,9 @@ class _validateFormRemailState extends State<validateFormRemail> {
   String _uname = '';
   String _cpass = '';
   String _uemail = '';
+  String _dept = '';
+  String _batch = '';
+  String _id = '';
 
   bool _isPassVisible1 = true;
   bool _isPassVisible2 = true;
@@ -194,6 +313,65 @@ class _validateFormRemailState extends State<validateFormRemail> {
               obscureText: _isPassVisible2,
             ),
           ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(30, 30, 10, 0),
+            child: TextFormField(
+              controller: _deptController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Invalid input";
+                }
+                return null;
+              },
+              onChanged: (value) => setState(() => this._dept = value),
+              decoration: InputDecoration(
+                hintText: 'Department of... ',
+                //labelText: "Enter batch",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(30, 30, 10, 0),
+            child: TextFormField(
+              controller: _batchController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Invalid input";
+                }
+                return null;
+              },
+              onChanged: (value) => setState(() => this._batch = value),
+              decoration: InputDecoration(
+                hintText: 'Batch number',
+                //labelText: "Enter batch",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(30, 30, 10, 0),
+            child: TextFormField(
+              controller: _idController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Invalid input";
+                } else if (_id.length < 10) {
+                  return "Invalid input length";
+                }
+                return null;
+              },
+              onChanged: (value) => setState(() => this._id = value),
+              decoration: InputDecoration(
+                hintText: '2012020XXX',
+                labelText: "ID",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
           ElevatedButton(
             child: Text('Submit'),
             style: ElevatedButton.styleFrom(
@@ -215,57 +393,61 @@ class _validateFormRemailState extends State<validateFormRemail> {
                   FirebaseAuth _auth = FirebaseAuth.instance;
                   FirebaseFirestore _firebaseFirestore =
                       FirebaseFirestore.instance;
-                  dynamic _userRef = FirebaseFirestore.instance
-                      .collection('mailUsers')
-                      .doc(_uemail);
-                  dynamic _x = await _userRef.get();
-                  if (!_x.exists) {
-                    try {
-                      UserCredential userCredential =
-                          await _auth.createUserWithEmailAndPassword(
-                        email: _uemail,
-                        password: _pass,
-                      );
+                  // dynamic _userRef = FirebaseFirestore.instance
+                  //     .collection('Users')
+                  //     .doc();
+                  // dynamic _x = await _userRef.get();
+                  // if (!_x.exists) {
+                  try {
+                    UserCredential userCredential =
+                        await _auth.createUserWithEmailAndPassword(
+                      email: _uemail,
+                      password: _pass,
+                    );
 
-                      print(_uname);
-                      print(_uemail);
-                      print(_pass);
+                    print(_uname);
+                    print(_uemail);
+                    print(_pass);
 
-                      User? _user = _auth.currentUser;
+                    User? _user = _auth.currentUser;
+                    String photoUrl = await uploadImg(img!);
 
-                      var _userMap = {
-                        'uid': _user!.uid,
-                        'userName': _uname,
-                        'email': _user.email,
-                      };
-                      print(_userMap);
+                    var _userMap = {
+                      'uid': _user!.uid,
+                      'userName': _uname,
+                      'email': _user.email,
+                      'batch': _batch,
+                      'dept': _dept,
+                      'student_id': _id,
+                      'photoURL': photoUrl == null
+                          ? 'https://i.stack.imgur.com/l60Hf.png'
+                          : photoUrl,
+                    };
+                    print({_userMap});
 
-                      await _firebaseFirestore
-                          .collection('mailUsers')
-                          .doc(_user.email)
-                          .set(_userMap);
+                    await _firebaseFirestore
+                        .collection('Users')
+                        .doc(_user.uid)
+                        .set(_userMap);
 
-                      print(_uname);
-                      print(_uemail);
-                      print(_pass);
+                    // print(_uname);
+                    // print(_uemail);
+                    // print(_pass);
 
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return logIn();
-                      }), (r) {
-                        return false;
-                      });
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'user-not-found') {
-                        ShowSnackBarText('No user found for that email.');
-                      } else if (e.code == 'wrong-password') {
-                        ShowSnackBarText('Wrong password provided.');
-                      } else if (e.code == 'email-already-in-use') {
-                        ShowSnackBarText("Email already registerd!");
-                      }
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (BuildContext context) {
+                      return logIn();
+                    }), (r) {
+                      return false;
+                    });
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found') {
+                      ShowSnackBarText('No user found for that email.');
+                    } else if (e.code == 'wrong-password') {
+                      ShowSnackBarText('Wrong password provided.');
+                    } else if (e.code == 'email-already-in-use') {
+                      ShowSnackBarText("Email already registerd!");
                     }
-                  } else {
-                    ShowSnackBarText("Email already registered!");
                   }
                 }
               }

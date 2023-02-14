@@ -42,8 +42,15 @@ dependencies:
   google_fonts: ^3.0.1
   pin_code_text_field: ^1.8.0
   file_picker: ^5.2.4
+  image_picker: ^0.8.6+1
+  path_provider: ^2.0.12
   firebase_storage: ^11.0.10
   pull_to_refresh: ^2.0.0
+  uuid: ^3.0.7
+  liquid_pull_to_refresh: ^3.0.1
+  intl: ^0.18.0
+  flutter_staggered_grid_view: ^0.4.1
+  provider: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +77,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/lulogo1.jpg
+    - images/lucc1.jpg
+    - images/lusc.jpg
+    - images/bannedCommunity.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

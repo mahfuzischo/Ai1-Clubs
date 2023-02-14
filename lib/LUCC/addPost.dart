@@ -4,13 +4,11 @@ import 'package:ai1_clubs/postData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ai1_clubs/LUCC/news_feed.dart';
+import 'package:ai1_clubs/provider.dart';
+import 'package:provider/provider.dart';
 
 class addPost extends StatefulWidget {
   const addPost({super.key});
@@ -23,6 +21,7 @@ class _addPostState extends State<addPost> {
   final TextEditingController _captionController = TextEditingController();
 
   bool isLoading = false;
+  String mname = '';
 
   File? _image;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -35,12 +34,19 @@ class _addPostState extends State<addPost> {
     var collection = fire.collection('Users');
     var docSnapshot = await collection.doc(uid).get();
     if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-      var value = data?['userName'];
-      uname = value.toString();
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      var value = data['userName'];
+      uname = value;
       print(uname);
     }
     return uname;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.mname = getUsrName().toString();
+    print("name=" + mname);
   }
 
   final imagePicker = ImagePicker();
@@ -104,6 +110,21 @@ class _addPostState extends State<addPost> {
     );
   }
 
+  Future<int> _listFiles() async {
+    int x = 0;
+    final storageRef = FirebaseStorage.instance.ref("posts/");
+    final listResult = await storageRef.listAll();
+    String ss = listResult.toString();
+    print('List result: $listResult');
+    for (var item in listResult.items) {
+      if (item != null) {
+        x++;
+      }
+    }
+    print("Number of pics : $x");
+    return x;
+  }
+
   Future<String> getPicUrl() async {
     dynamic uid = _auth.currentUser!.uid;
     String url = '';
@@ -119,7 +140,9 @@ class _addPostState extends State<addPost> {
   }
 
   Future<String> _uploadImg(String childName, File file) async {
-    String _picname = const Uuid().v1();
+    int g = await _listFiles();
+    int k = g + 1;
+    String _picname = "postimage$k";
     Reference ref = _storage
         .ref()
         .child(childName)
@@ -132,31 +155,34 @@ class _addPostState extends State<addPost> {
     return dldURL;
   }
 
-  Future<String> _uploadPost(String uid, dynamic userName) async {
+  Future<String> _uploadPost(
+      String uid, String userName, String photoURL) async {
     setState(() {
       isLoading = true;
     });
-    String res = "Error occured";
+    String result = "Error occured";
+    String v = _captionController.toString();
     try {
-      print(_captionController);
+      print("caption  :  $v");
       String postUrl = await _uploadImg("posts", _image!);
       String photoUrl = await getPicUrl();
 
+      String _postId = const Uuid().v1();
+
       print("Pic url" + postUrl);
-      String postId = const Uuid().v1();
 
       Post post = Post(
           description: _captionController.text,
           uid: uid,
           userName: userName,
-          postId: postId,
+          postId: _postId,
           datePublished: DateTime.now(),
           photoURL: photoUrl,
           postUrl: postUrl);
 
-      fire.collection('posts').doc(postId).set(post.toJson());
+      fire.collection('posts').doc(_postId).set(post.toJson());
 
-      res = "Successful";
+      result = "Successful";
       setState(() {
         isLoading = false;
       });
@@ -164,9 +190,10 @@ class _addPostState extends State<addPost> {
       setState(() {
         isLoading = false;
       });
+      print(e.toString());
       ShowSnackBarText(e.toString());
     }
-    if (res == "Successful") {
+    if (result == "Successful") {
       ShowSnackBarText("Post successfully uploaded.");
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (BuildContext context) {
@@ -177,7 +204,7 @@ class _addPostState extends State<addPost> {
     } else {
       ShowSnackBarText("Error uploading post.");
     }
-    return res;
+    return result;
   }
 
   void dispose() {
@@ -187,6 +214,7 @@ class _addPostState extends State<addPost> {
 
   @override
   Widget build(BuildContext context) {
+    provider _userProvider = Provider.of<provider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
@@ -195,8 +223,12 @@ class _addPostState extends State<addPost> {
         centerTitle: false,
         actions: [
           TextButton(
-              onPressed: () async {
-                _uploadPost(_auth.currentUser!.uid, await getUsrName());
+              onPressed: () {
+                _uploadPost(
+                  _userProvider.getUser.uid,
+                  _userProvider.getUser.userName,
+                  _userProvider.getUser.photoUrl,
+                );
               },
               child: const Text(
                 "Post",
@@ -221,16 +253,18 @@ class _addPostState extends State<addPost> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(getPicUrl().toString()),
+                    backgroundImage: NetworkImage(
+                      _userProvider.getUser.photoUrl,
+                    ),
                     radius: 25,
                   ),
                   SizedBox(
                     width: 15,
                   ),
-                  // Text(
-                  //   "$getUsrName",
-                  //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  // )
+                  Text(
+                    _userProvider.getUser.userName,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  )
                 ],
               ),
               SizedBox(
@@ -255,12 +289,19 @@ class _addPostState extends State<addPost> {
                       ? SizedBox(
                           height: 250,
                           width: 200,
-                          child: Container(
-                            //post image need to add
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: FileImage(_image!),
-                                    alignment: FractionalOffset.topCenter)),
+                          child: InkWell(
+                            onDoubleTap: () {
+                              setState(() {
+                                _image = null;
+                                ShowSnackBarText("Image successfully removed");
+                              });
+                            },
+                            splashColor: Colors.blue,
+                            child: Ink.image(
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: 50,
+                                image: FileImage(_image!)),
                           ),
                         )
                       : Padding(
