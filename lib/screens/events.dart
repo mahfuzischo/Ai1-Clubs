@@ -1,17 +1,18 @@
+import 'package:ai1_clubs/screens/home.dart';
 import 'package:flutter/material.dart';
-import 'package:ai1_clubs/LUCC/addPost.dart';
+import 'package:ai1_clubs/screens/addEvent.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ai1_clubs/LUCC/postWidget.dart';
+import 'package:ai1_clubs/screens/eventWidget.dart';
 import 'package:ai1_clubs/screens/searchScreen.dart';
 
-class FeedScreen extends StatefulWidget {
-  const FeedScreen({Key? key}) : super(key: key);
+class eventScreen extends StatefulWidget {
+  const eventScreen({Key? key}) : super(key: key);
 
   @override
-  State<FeedScreen> createState() => _FeedScreenState();
+  State<eventScreen> createState() => _eventScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _eventScreenState extends State<eventScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -21,7 +22,7 @@ class _FeedScreenState extends State<FeedScreen> {
       appBar: AppBar(
           backgroundColor: Colors.purple[200],
           centerTitle: false,
-          title: Text("Posts"),
+          title: Text("Events"),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -33,20 +34,22 @@ class _FeedScreenState extends State<FeedScreen> {
                     MaterialPageRoute(builder: (context) => SearchScreen()));
               },
             ),
-            IconButton(
-              icon: Icon(
-                Icons.post_add_outlined,
-                color: Colors.white70,
-              ),
-              onPressed: () async {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => addPost()));
-              },
-            ),
+            isAdmin == true
+                ? IconButton(
+                    icon: Icon(
+                      Icons.post_add_outlined,
+                      color: Colors.white70,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => addEvent()));
+                    },
+                  )
+                : Container(),
           ]),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('posts')
+            .collection('events')
             .orderBy('datePublished', descending: true)
             .snapshots(),
         builder: (context,
@@ -65,7 +68,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       horizontal: width > 600 ? width * 0.3 : 0,
                       vertical: width > 600 ? 15 : 0,
                     ),
-                    child: postWidget(
+                    child: eventWidget(
                       snap: snapshot.data!.docs[index].data(),
                     ),
                   ));

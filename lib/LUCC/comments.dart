@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 
 class comments extends StatefulWidget {
   final postId;
-  const comments({super.key, required this.postId});
+  final isPost;
+  const comments({super.key, required this.postId, required this.isPost});
 
   @override
   State<comments> createState() => _commentsState();
@@ -56,6 +57,7 @@ class _commentsState extends State<comments> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<provider>(context).getUser;
+    var isPost = widget.isPost;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple[200],
@@ -65,11 +67,17 @@ class _commentsState extends State<comments> {
         centerTitle: false,
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('posts')
-            .doc(widget.postId)
-            .collection('comments')
-            .snapshots(),
+        stream: isPost == true
+            ? FirebaseFirestore.instance
+                .collection('posts')
+                .doc(widget.postId)
+                .collection('comments')
+                .snapshots()
+            : FirebaseFirestore.instance
+                .collection('events')
+                .doc(widget.postId)
+                .collection('comments')
+                .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

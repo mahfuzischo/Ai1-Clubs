@@ -15,18 +15,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:ai1_clubs/LUCC/news_feed.dart';
 
-class postWidget extends StatefulWidget {
+class eventWidget extends StatefulWidget {
   final snap;
-  const postWidget({
+  const eventWidget({
     Key? key,
     required this.snap,
   }) : super(key: key);
 
   @override
-  State<postWidget> createState() => _postWidgetState();
+  State<eventWidget> createState() => _eventWidgetState();
 }
 
-class _postWidgetState extends State<postWidget> {
+class _eventWidgetState extends State<eventWidget> {
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -41,10 +41,10 @@ class _postWidgetState extends State<postWidget> {
   String userName = '';
   int commentLen = 0;
 
-  Future<String> deletePost(String postId) async {
+  Future<String> deletePost(String eventId) async {
     String res = "Some error occurred";
     try {
-      await _fire.collection('posts').doc(postId).delete();
+      await _fire.collection('events').doc(eventId).delete();
       res = 'success';
     } catch (e) {
       res = e.toString();
@@ -61,8 +61,8 @@ class _postWidgetState extends State<postWidget> {
   getCommentLen() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.snap['postId'])
+          .collection('event')
+          .doc(widget.snap['eventId'])
           .collection('comments')
           .get();
       commentLen = snap.docs.length;
@@ -155,7 +155,7 @@ class _postWidgetState extends State<postWidget> {
                                               ),
                                               onTap: () {
                                                 deletePost(
-                                                  widget.snap['postId']
+                                                  widget.snap['eventId']
                                                       .toString(),
                                                 );
 
@@ -178,7 +178,7 @@ class _postWidgetState extends State<postWidget> {
             height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
             child: Image.network(
-              widget.snap['postUrl'].toString(),
+              widget.snap['eventUrl'].toString(),
               fit: BoxFit.cover,
             ),
           ),
@@ -193,8 +193,8 @@ class _postWidgetState extends State<postWidget> {
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => comments(
-                        isPost: true,
-                        postId: widget.snap['postId'].toString(),
+                        isPost: false,
+                        postId: widget.snap['eventId'].toString(),
                       ),
                     ),
                   ),
@@ -258,8 +258,8 @@ class _postWidgetState extends State<postWidget> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => comments(
-                        isPost: true,
-                        postId: widget.snap['postId'].toString(),
+                        isPost: false,
+                        postId: widget.snap['eventId'].toString(),
                       ),
                     ),
                   ),
