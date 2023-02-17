@@ -8,6 +8,7 @@ import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ai1_clubs/screens/registration1.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -258,7 +259,7 @@ class _registration_PhnState extends State<registration_Phn> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(context,
                 MaterialPageRoute(builder: (BuildContext context) {
-              return registration();
+              return regScreenOne();
             }), (r) {
               return false;
             });

@@ -239,7 +239,7 @@ class _eventWidgetState extends State<eventWidget> {
                     DateFormat.yMMMd()
                         .format(widget.snap['datePublished'].toDate()),
                     style: const TextStyle(
-                      color: Colors.grey,
+                      color: Colors.blueGrey,
                     ),
                   ),
                   //   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -250,7 +250,7 @@ class _eventWidgetState extends State<eventWidget> {
                       'View all $commentLen comments',
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.grey,
+                        color: Colors.blueGrey,
                       ),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 4),

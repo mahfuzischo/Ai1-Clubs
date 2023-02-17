@@ -1,3 +1,4 @@
+import 'package:ai1_clubs/LUCC/lucc_home.dart';
 import 'package:ai1_clubs/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/screens/addEvent.dart';
@@ -23,6 +24,16 @@ class _eventScreenState extends State<eventScreen> {
           backgroundColor: Colors.purple[200],
           centerTitle: false,
           title: Text("Events"),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white70,
+            ),
+            onPressed: () async {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => LUCC_Home()));
+            },
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -40,7 +51,7 @@ class _eventScreenState extends State<eventScreen> {
                       Icons.post_add_outlined,
                       color: Colors.white70,
                     ),
-                    onPressed: () async {
+                    onPressed: () {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => addEvent()));
                     },

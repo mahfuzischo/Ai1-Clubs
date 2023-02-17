@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ai1_clubs/screens/log_in.dart';
@@ -11,11 +12,33 @@ class home extends StatefulWidget {
   State<home> createState() => _homeState();
 }
 
+bool isAdmin = false;
+
 class _homeState extends State<home> {
+  Future<String> getAdmin() async {
+    dynamic uid = FirebaseAuth.instance.currentUser!.uid.toString();
+    String uname = '';
+    var collection = FirebaseFirestore.instance.collection('admins');
+    var docSnapshot = await collection.doc(uid).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      var value = data['uid'].toString();
+      if (uid == value) {
+        isAdmin = true;
+      }
+
+      uname = value;
+      print(uid);
+      print(uname);
+    }
+    return uname;
+  }
+
   @override
   void initState() {
     super.initState();
     addData();
+    getAdmin();
   }
 
   addData() async {
@@ -108,8 +131,9 @@ class _homeState extends State<home> {
                 padding: EdgeInsets.all(8),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => LUCC_Home()));
+                    // Navigator.of(context).push(
+                    //     MaterialPageRoute(builder: (context) => LUCC_Home()
+                    //     ));
                   },
                   splashColor: Colors.blue,
                   child: Ink.image(

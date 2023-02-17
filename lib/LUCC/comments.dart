@@ -3,7 +3,6 @@ import 'package:ai1_clubs/provider.dart';
 import 'package:ai1_clubs/userData.dart';
 import 'package:ai1_clubs/postData.dart';
 import 'package:flutter/material.dart';
-
 import 'package:uuid/uuid.dart';
 import 'package:ai1_clubs/methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -56,7 +55,7 @@ class _commentsState extends State<comments> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = Provider.of<provider>(context).getUser;
+    final UseR user = Provider.of<provider>(context).getUser;
     var isPost = widget.isPost;
     return Scaffold(
       appBar: AppBar(

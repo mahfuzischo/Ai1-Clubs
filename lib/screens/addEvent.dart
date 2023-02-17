@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:ai1_clubs/provider.dart';
 import 'package:provider/provider.dart';
+import 'package:ai1_clubs/screens/events.dart';
 
 class addEvent extends StatefulWidget {
   const addEvent({super.key});
@@ -197,7 +198,7 @@ class _addEventState extends State<addEvent> {
       ShowSnackBarText("Event successfully uploaded.");
       Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return const FeedScreen();
+        return const eventScreen();
       }), (r) {
         return false;
       });

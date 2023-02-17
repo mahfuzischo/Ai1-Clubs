@@ -1,8 +1,9 @@
+import 'package:ai1_clubs/LUCC/lucc_home.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/LUCC/addPost.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ai1_clubs/LUCC/postWidget.dart';
-import 'package:ai1_clubs/screens/searchScreen.dart';
+import 'package:ai1_clubs/screens/searchPost.dart';
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({Key? key}) : super(key: key);
@@ -22,6 +23,16 @@ class _FeedScreenState extends State<FeedScreen> {
           backgroundColor: Colors.purple[200],
           centerTitle: false,
           title: Text("Posts"),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white70,
+            ),
+            onPressed: () async {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => LUCC_Home()));
+            },
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -30,7 +41,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
               onPressed: () async {
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SearchScreen()));
+                    MaterialPageRoute(builder: (context) => searchPost()));
               },
             ),
             IconButton(

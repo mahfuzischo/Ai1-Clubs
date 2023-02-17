@@ -1,4 +1,3 @@
-import 'package:ai1_clubs/screens/events.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -6,14 +5,14 @@ import 'package:ai1_clubs/screens/profile.dart';
 import 'package:ai1_clubs/LUCC/postWidget.dart';
 import 'package:ai1_clubs/LUCC/newsFeed.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+class searchPost extends StatefulWidget {
+  const searchPost({Key? key}) : super(key: key);
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<searchPost> createState() => _searchPostState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _searchPostState extends State<searchPost> {
   final TextEditingController searchController = TextEditingController();
   bool showPosts = false;
 
@@ -23,19 +22,18 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white60,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white70,
-          ),
-          onPressed: () async {
-            Navigator.pushAndRemoveUntil(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return eventScreen();
-            }), (r) {
-              return false;
-            });
-          },
-        ),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white70,
+            ),
+            onPressed: () async {
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return FeedScreen();
+              }), (r) {
+                return false;
+              });
+            }),
         title: Form(
           child: TextFormField(
             controller: searchController,
@@ -52,10 +50,10 @@ class _SearchScreenState extends State<SearchScreen> {
       body: showPosts
           ? FutureBuilder(
               future: FirebaseFirestore.instance
-                  .collection('events')
+                  .collection('posts')
                   .where(
                     'description',
-                    isGreaterThanOrEqualTo: searchController.text,
+                    isGreaterThan: searchController.text,
                   )
                   .get(),
               builder: (context, snapshot) {
@@ -70,13 +68,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     return InkWell(
                       onTap: () {
                         print((snapshot.data! as dynamic)
-                            .docs[index]['eventId']
+                            .docs[index]['postId']
                             .toString());
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => postWidget(
                               snap: (snapshot.data! as dynamic).docs[index]
-                                  ['eventId'],
+                                  ['postId'],
                             ),
                           ),
                         );
@@ -111,7 +109,7 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             )
           : Container(
-              child: Center(child: Text("Search for events.....")),
+              child: Center(child: Text("Search for posts.....")),
             ),
     );
   }

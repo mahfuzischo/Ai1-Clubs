@@ -1,6 +1,7 @@
 import 'package:ai1_clubs/screens/home.dart';
 import 'package:ai1_clubs/screens/forgot_pass.dart';
 import 'package:ai1_clubs/screens/registration.dart';
+import 'package:ai1_clubs/screens/registration1.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -260,7 +261,7 @@ class _validFormState extends State<validForm> {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return registration();
+                  return regScreenOne();
                 }), (r) {
                   return false;
                 });

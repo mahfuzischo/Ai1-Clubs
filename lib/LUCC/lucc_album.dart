@@ -24,13 +24,13 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
   }
 
   void initState() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    )..addListener(() {
-        setState(() {});
-      });
-    controller.repeat(reverse: true);
+    // controller = AnimationController(
+    //   vsync: this,
+    //   duration: const Duration(seconds: 8),
+    // )..addListener(() {
+    //     setState(() {});
+    //   });
+    // controller.repeat(reverse: true);
     super.initState();
   }
 
@@ -48,15 +48,9 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
 
   int x = 0;
   int y = 0;
-  // List<Image> myImages = [
-  //   Image(
-  //     image: AssetImage('images/lulogo1.jpg'),
-  //     fit: BoxFit.cover,
-  //   ),
-  // ];
 
   int a = 1;
-  //List<String> imge = [];
+
   List<Image> lucc_imgList = [];
 
   void ShowSnackBarText(String text) {
@@ -67,38 +61,9 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> listFiles() async {
-    final storageRef = FirebaseStorage.instance.ref("lucc_album/");
-    final listResult = await storageRef.listAll();
-    String ss = listResult.toString();
-    print('List result: $listResult');
-    for (var item in listResult.items) {
-      if (item != null) {
-        x++;
-      }
-    }
-    print(x);
-    y = y + x;
-    x = 0;
-  }
-
-  /* Future<void> _reload(bool reload) async {
-    await getWidget().;
-  }*/
-
-  // Future<void> uploadFile(String filepath, String filename) async {
-  //   File file = File(filepath);
-  //   int z = y + 1;
-  //   try {
-  //     await storage.ref('lucc_album/lucc_img$z)').putFile(file);
-  //   } on FirebaseException catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   Future<int> _listFiles() async {
     int x = 0;
-    final storageRef = FirebaseStorage.instance.ref("events/");
+    final storageRef = FirebaseStorage.instance.ref("lucc_album/");
     final listResult = await storageRef.listAll();
     String ss = listResult.toString();
     print('List result: $listResult');
@@ -111,19 +76,6 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
     return x;
   }
 
-  // Future<String> getPicUrl() async {
-  //   String url = '';
-  //   var collection = fire.collection('luccAlbum');
-  //   var docSnapshot = await collection.doc().get();
-  //   if (docSnapshot.exists) {
-  //     Map<String, dynamic>? data = docSnapshot.data();
-  //     var value = data?['photoId'];
-  //     url = value.toString();
-  //     print(url);
-  //   }
-  //   return url;
-  // }
-
   Future<String> _uploadImg(File file) async {
     int g = await _listFiles();
     int k = g + 1;
@@ -131,64 +83,19 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
     Reference ref = _storage.ref().child("lucc_album").child(_picname);
     UploadTask uploadTask = ref.putFile(file);
     TaskSnapshot snap = await uploadTask;
-    String dldURL = await snap.ref.getDownloadURL();
+    String dldURL = await snap.ref.getDownloadURL().toString();
     print("photourl:     " + dldURL);
     return dldURL;
   }
 
-  Future<String> _uploadImgUrl(File img) {
-    String s = "Failed";
+  Future<String> _uploadImgUrl(File img) async {
+    // String s = "Failed";
     String photoid = Uuid().v1();
-    Future<String> x = _uploadImg(img);
-    fire.collection('luccAlbum').doc(photoid).set({"photoId": photoid});
+    String x = await _uploadImg(img);
+    print(x.toString());
+    await fire.collection('luccAlbum').doc(photoid).set({"photoURL": x});
     return x;
   }
-
-  // Future downloadURL(String imgName) async {
-  //   String c = imgName.toString();
-  //   String dowloadURL =
-  //       await storage.ref('lucc_album/lucc_img$c.jpg').getDownloadURL();
-  //   return dowloadURL;
-  // }
-
-  /*lucc_images() async {
-    for (var i = 0; i <= x; i++) {
-      imge.add(await downloadURL("$i"));
-    }
-  }*/
-
-  /* lucc_print() {
-    for (var i = 0; i <= x; i++) {
-      print(imge.toString());
-    }
-  }
-*/
-  // Future pushImg() async {
-  //   for (var i = 0; i <= y; i++) {
-  //     int k = i;
-  //     String f = i.toString();
-  //     String s = 'lucc_album/lucc_img$f.jpg';
-
-  //     print(s);
-
-  //     /* List<Image> lucc_imglist = [
-  //       Image(
-  //         image: NetworkImage(
-  //             await storage.ref('lucc_album/lucc_img$s.jpg').getDownloadURL()),
-  //         fit: BoxFit.cover,
-  //       ),
-  //     ]*/
-  //     if (y == k) {
-  //       break;
-  //     }
-  //     lucc_imgList.add(Image(
-  //       image: NetworkImage(
-  //         await _storage.ref(s).getDownloadURL(),
-  //       ),
-  //       fit: BoxFit.cover,
-  //     ));
-  //   }
-  // }
 
   late AnimationController controller;
 
@@ -214,36 +121,18 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
                   } else
                     ShowSnackBarText("No image selected");
                 });
-
-                // print(x);
-                // int n = x;
-                // final _res = await FilePicker.platform.pickFiles(
-                //     allowMultiple: false,
-                //     type: FileType.custom,
-                //     allowedExtensions: ['png', 'jpg', 'jpeg']);
-                // if (_res == null) {
-                //   ShowSnackBarText('No file found!');
-                //   return null;
-                // }
-                // final path = _res.files.single.path!;
-                // final fileName = _res.files.single.name;
-
                 _uploadImgUrl(_image!);
               },
             ),
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.refresh,
-                  color: Colors.white70,
-                ))
           ],
           backgroundColor: Colors.purple[300],
           elevation: 0,
         ),
         body: FutureBuilder(
-          future:
-              FirebaseFirestore.instance.collection('luccAlbum').doc().get(),
+          future: FirebaseFirestore.instance
+              .collection('luccAlbum')
+              .where('photoURL', isNotEqualTo: null)
+              .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -262,10 +151,9 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
               ),
               itemBuilder: (context, index) {
                 DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
-
                 return Container(
                   child: Image(
-                    image: NetworkImage(snap['photoId']),
+                    image: NetworkImage(snap['photoURL']),
                     fit: BoxFit.cover,
                   ),
                 );
@@ -343,7 +231,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
 
   Widget getWidget() {
     print(x);
-    listFiles();
+    _listFiles();
     print('URL : ');
     // print(downloadURL('1'));
 

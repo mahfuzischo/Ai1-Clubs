@@ -8,13 +8,13 @@ class methods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // get user details
-  Future<model.User> getUserDetails() async {
+  Future<model.UseR> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
     DocumentSnapshot documentSnapshot =
         await _firestore.collection('Users').doc(currentUser.uid).get();
 
-    return model.User.fromSnap(documentSnapshot);
+    return model.UseR.fromSnap(documentSnapshot);
   }
 
   Future<String> addComment(String postId, String text, String uid, String name,

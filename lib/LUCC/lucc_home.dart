@@ -1,5 +1,7 @@
 import 'package:ai1_clubs/LUCC/newsFeed.dart';
+import 'package:ai1_clubs/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:ai1_clubs/screens/events.dart';
 import 'package:ai1_clubs/LUCC/lucc_album.dart';
 import 'package:ai1_clubs/LUCC/news_feed.dart';
 
@@ -19,6 +21,20 @@ class _LUCC_HomeState extends State<LUCC_Home> {
         centerTitle: true,
         backgroundColor: Colors.purple[300],
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white70,
+          ),
+          onPressed: () async {
+            Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return home();
+            }), (r) {
+              return false;
+            });
+          },
+        ),
       ),
       body: Center(
         child: Column(
@@ -64,13 +80,16 @@ class _LUCC_HomeState extends State<LUCC_Home> {
               height: 70,
               width: 230,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => eventScreen()));
+                },
                 icon: Icon(
                   Icons.add,
                   size: 25,
                 ),
                 label: Text(
-                  'Add Event',
+                  'Events',
                   style: TextStyle(
                       fontStyle: FontStyle.normal,
                       fontWeight: FontWeight.bold,
