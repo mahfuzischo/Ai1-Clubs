@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Post {
   final String description;
@@ -19,14 +20,14 @@ class Post {
     required this.photoURL,
   });
 
-  static Post fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
+  factory Post.fromSnap(DocumentSnapshot<Map<dynamic, dynamic>> snap) {
+    final snapshot = snap.data()!;
 
     return Post(
         description: snapshot["description"],
         uid: snapshot["uid"],
         postId: snapshot["postId"],
-        datePublished: snapshot["datePublished"],
+        datePublished: snapshot["datePublished"].toDate(),
         userName: snapshot["userName"],
         postUrl: snapshot['postUrl'],
         photoURL: snapshot['photoURL']);

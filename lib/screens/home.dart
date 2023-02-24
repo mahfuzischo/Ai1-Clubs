@@ -13,6 +13,7 @@ class home extends StatefulWidget {
 }
 
 bool isAdmin = false;
+bool isRestricted = false;
 
 class _homeState extends State<home> {
   Future<String> getAdmin() async {
@@ -34,6 +35,24 @@ class _homeState extends State<home> {
     return uname;
   }
 
+  Future<String> getRestriction() async {
+    dynamic uid = FirebaseAuth.instance.currentUser!.uid.toString();
+    String uname = '';
+    var collection = FirebaseFirestore.instance.collection('restricted');
+    var docSnapshot = await collection.doc(uid).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      var value = data['uid'].toString();
+      if (uid == value) {
+        isRestricted = true;
+        print("Restricted:" + uid);
+      }
+
+      uname = value;
+    }
+    return uname;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +68,7 @@ class _homeState extends State<home> {
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: Duration(seconds: 3),
         content: Text(text),
       ),
     );
@@ -112,8 +132,13 @@ class _homeState extends State<home> {
                 padding: EdgeInsets.all(8),
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => LUCC_Home()));
+                    if (isRestricted == false) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => LUCC_Home()));
+                    } else {
+                      ShowSnackBarText(
+                          "The user is currently rstricted. Please contact the admin");
+                    }
                   },
                   splashColor: Colors.blue,
                   child: Ink.image(

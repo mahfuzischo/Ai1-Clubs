@@ -18,6 +18,27 @@ class addPost extends StatefulWidget {
 }
 
 class _addPostState extends State<addPost> {
+  // Future<String> getUsrName() async {
+  //   dynamic uid = _auth.currentUser!.uid;
+  //   String uname = '';
+  //   var collection = fire.collection('Users');
+  //   var docSnapshot = await collection.doc(uid).get();
+  //   if (docSnapshot.exists) {
+  //     Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+  //     var value = data['userName'];
+  //     uname = value;
+  //     print(uname);
+  //   }
+  //   return uname;
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    // this.mname = getUsrName().toString();
+    // print("name=" + mname);
+  }
+
   final TextEditingController _captionController = TextEditingController();
 
   bool isLoading = false;
@@ -27,27 +48,6 @@ class _addPostState extends State<addPost> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore fire = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<String> getUsrName() async {
-    dynamic uid = _auth.currentUser!.uid;
-    String uname = '';
-    var collection = fire.collection('Users');
-    var docSnapshot = await collection.doc(uid).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-      var value = data['userName'];
-      uname = value;
-      print(uname);
-    }
-    return uname;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    this.mname = getUsrName().toString();
-    print("name=" + mname);
-  }
 
   final imagePicker = ImagePicker();
 
@@ -105,6 +105,7 @@ class _addPostState extends State<addPost> {
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: Duration(seconds: 3),
         content: Text(text),
       ),
     );

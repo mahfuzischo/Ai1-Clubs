@@ -32,6 +32,18 @@ class UseR {
         student_id: snapshot["student_id"]);
   }
 
+  factory UseR.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
+    return UseR(
+        userName: snapshot["userName"],
+        uid: snapshot["uid"],
+        email: snapshot["email"],
+        photoUrl: snapshot["photoURL"],
+        dept: snapshot["dept"],
+        batch: snapshot["batch"],
+        student_id: snapshot["student_id"]);
+  }
+
   Map<String, dynamic> toJson() => {
         "userName": userName,
         "uid": uid,
@@ -41,4 +53,6 @@ class UseR {
         "batch": batch,
         "student_id": student_id,
       };
+
+  static fromFirebase(QueryDocumentSnapshot<Map<String, dynamic>> e) {}
 }

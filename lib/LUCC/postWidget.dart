@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:ai1_clubs/LUCC/news_feed.dart';
+import 'package:ai1_clubs/LUCC/editPost.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class postWidget extends StatefulWidget {
   final snap;
@@ -130,44 +132,37 @@ class _postWidgetState extends State<postWidget> {
                   ),
                 ),
                 widget.snap['uid'].toString() == _auth.currentUser!.uid
-                    ? IconButton(
-                        onPressed: () {
-                          showDialog(
-                            useRootNavigator: false,
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: ListView(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shrinkWrap: true,
-                                    children: [
-                                      'Delete',
-                                    ]
-                                        .map(
-                                          (e) => InkWell(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: Text(e),
-                                              ),
-                                              onTap: () {
-                                                deletePost(
-                                                  widget.snap['postId']
-                                                      .toString(),
-                                                );
-
-                                                Navigator.of(context).pop();
-                                              }),
-                                        )
-                                        .toList()),
-                              );
-                            },
-                          );
+                    ? PopupMenuButton(
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem<int>(
+                              value: 0,
+                              child: Text("Delete"),
+                            ),
+                            PopupMenuItem<int>(
+                              value: 1,
+                              child: Text("Edit"),
+                            ),
+                          ];
                         },
-                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) {
+                          if (value == 0) {
+                            deletePost(
+                              widget.snap['postId'].toString(),
+                            );
+
+                            Navigator.of(context).pop();
+                          }
+                          if (value == 1) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => editPost(
+                                  reqID: widget.snap['postId'],
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       )
                     : Container(),
               ],

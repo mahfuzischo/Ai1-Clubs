@@ -1,3 +1,4 @@
+import 'package:ai1_clubs/screens/log_in.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,6 +55,22 @@ class _regScreen1State extends State<regScreenOne> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            size: 30,
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () async {
+            Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return logIn();
+            }), (r) {
+              return false;
+            });
+          },
+        ),
         backgroundColor: Colors.purple[300],
         centerTitle: true,
         title: Text(

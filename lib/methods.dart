@@ -1,7 +1,12 @@
 import 'package:ai1_clubs/userData.dart' as model;
+import 'package:ai1_clubs/userData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+import 'package:ai1_clubs/studentData.dart' as model;
+import 'package:ai1_clubs/studentData.dart';
+import 'package:ai1_clubs/postData.dart' as model;
+import 'package:ai1_clubs/postData.dart';
 
 class methods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -15,6 +20,30 @@ class methods {
         await _firestore.collection('Users').doc(currentUser.uid).get();
 
     return model.UseR.fromSnap(documentSnapshot);
+  }
+
+  Future<List> getAllUsers() async {
+    final snapshot = await _firestore.collection("Users").get();
+    final allUsers = snapshot.docs.map((e) => UseR.fromFirebase(e)).toList();
+    return allUsers;
+  }
+
+  Future<model.std> getStudentData(String id) async {
+    final snapshot = await _firestore
+        .collection('students')
+        .where("id", isEqualTo: id)
+        .get();
+    final studentData = snapshot.docs.map((e) => std.fromSnap(e)).single;
+    return studentData;
+  }
+
+  Future<model.Post> getPostData(String postId) async {
+    final snapshot = await _firestore
+        .collection('posts')
+        .where("postId", isEqualTo: postId)
+        .get();
+    final pOstData = snapshot.docs.map((e) => Post.fromSnap(e)).single;
+    return pOstData;
   }
 
   Future<String> addComment(String postId, String text, String uid, String name,

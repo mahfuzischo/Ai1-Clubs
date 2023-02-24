@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:uuid/uuid.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class lucc_album extends StatefulWidget {
   const lucc_album({super.key});
@@ -20,17 +21,17 @@ class lucc_album extends StatefulWidget {
 
 class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
   Future<void> refresh() async {
-    return await Future.delayed(Duration(seconds: 8));
+    return await Future.delayed(Duration(seconds: 2));
   }
 
   void initState() {
-    // controller = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(seconds: 8),
-    // )..addListener(() {
-    //     setState(() {});
-    //   });
-    // controller.repeat(reverse: true);
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..addListener(() {
+        setState(() {});
+      });
+    controller.repeat(reverse: true);
     super.initState();
   }
 
@@ -56,6 +57,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        duration: Duration(seconds: 3),
         content: Text(text),
       ),
     );
@@ -83,7 +85,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
     Reference ref = _storage.ref().child("lucc_album").child(_picname);
     UploadTask uploadTask = ref.putFile(file);
     TaskSnapshot snap = await uploadTask;
-    String dldURL = await snap.ref.getDownloadURL().toString();
+    String dldURL = await snap.ref.getDownloadURL();
     print("photourl:     " + dldURL);
     return dldURL;
   }
@@ -99,7 +101,6 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
 
   late AnimationController controller;
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,64 +129,30 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
           backgroundColor: Colors.purple[300],
           elevation: 0,
         ),
-        body: FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection('luccAlbum')
-              .where('photoURL', isNotEqualTo: null)
-              .get(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            return GridView.builder(
-              shrinkWrap: true,
-              itemCount: (snapshot.data! as dynamic).docs.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                //childAspectRatio: 1,
-              ),
-              itemBuilder: (context, index) {
-                DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
-                return Container(
-                  child: Image(
-                    image: NetworkImage(snap['photoURL']),
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-            );
-          },
+        body: LiquidPullToRefresh(
+          animSpeedFactor: 5,
+          child: gg(),
+          onRefresh: refresh,
+          height: 250,
+          backgroundColor: Colors.purple[300],
+          color: Colors.orange[200],
+          showChildOpacityTransition: true,
         )
+        // Column(
+        //   children: [
 
-        // LiquidPullToRefresh(
-        //   animSpeedFactor: 5,
-        //   child: gg(),
-        //   onRefresh: refresh,
-        //   height: 250,
-        //   backgroundColor: Colors.purple[300],
-        //   color: Colors.orange[200],
-        //   showChildOpacityTransition: true,
+        //     if (lucc_imgList.length != 0) ...[
+        //       getWidget()
+        //     ] else ...[
+        //       Center(
+        //         child: CircularProgressIndicator(
+        //           value: controller.value,
+        //           semanticsLabel: 'Circular progress indicator',
+        //         ),
+        //       )
+        //     ]
+        //   ],
         // )
-        /*Column(
-          children: [
-            
-            if (lucc_imgList.length != 0) ...[
-              getWidget()
-            ] else ...[
-              Center(
-                child: CircularProgressIndicator(
-                  value: controller.value,
-                  semanticsLabel: 'Circular progress indicator',
-                ),
-              )
-            ]
-          ],
-        )*/
         /*RefreshIndicator(
             onRefresh: () async {
               getWidget();
@@ -226,7 +193,37 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
   }
 
   Widget gg() {
-    return getWidget();
+    return FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('luccAlbum')
+            .where('photoURL', isNotEqualTo: null)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return GridView.builder(
+              shrinkWrap: true,
+              itemCount: (snapshot.data! as dynamic).docs.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+                //childAspectRatio: 1,
+              ),
+              itemBuilder: (context, index) {
+                DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
+                return Container(
+                  child: Image(
+                    image: NetworkImage(snap['photoURL']),
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 
   Widget getWidget() {

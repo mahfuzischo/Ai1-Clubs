@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:ai1_clubs/LUCC/news_feed.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class eventWidget extends StatefulWidget {
   final snap;
@@ -72,19 +73,6 @@ class _eventWidgetState extends State<eventWidget> {
       );
     }
   }
-
-  // Future getUserDetails() async {
-  //   dynamic Uid = _auth.currentUser!.uid;
-  //   var collection = _fire.collection('Users');
-  //   var docSnapshot = await collection.doc(Uid).get();
-  //   if (docSnapshot.exists) {
-  //     Map<String, dynamic>? data = docSnapshot.data();
-  //     var value = data?['userName'];
-  //     userName = value;
-  //     print(userName);
-  //     return userName;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
