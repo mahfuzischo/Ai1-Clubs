@@ -1,6 +1,5 @@
 import 'package:ai1_clubs/methods.dart';
 import 'package:ai1_clubs/screens/log_in.dart';
-import 'package:ai1_clubs/screens/phoneReg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
@@ -27,11 +26,11 @@ class regScreenTwo extends StatefulWidget {
   State<regScreenTwo> createState() => _regScreenTwoState();
 }
 
+File? img;
 final imagePicker = ImagePicker();
 final FirebaseFirestore fire = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseStorage _storage = FirebaseStorage.instance;
-File? img;
 
 Future<String> uploadImg(File file) async {
   String _picname = const Uuid().v1();
@@ -149,7 +148,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.purple[300],
+        backgroundColor: Colors.grey[700],
         centerTitle: true,
         title: Text(
           'Registration',
@@ -356,11 +355,9 @@ class _regScreenTwoState extends State<regScreenTwo> {
                               }
                               return null;
                             },
-                            // onChanged: (value) =>
-                            //     setState(() => this._batch = value),
                             decoration: InputDecoration(
                               hintText: 'Batch number',
-                              //labelText: "Enter batch",
+                              labelText: "Enter batch",
                               border: OutlineInputBorder(),
                             ),
                           ),
@@ -371,8 +368,8 @@ class _regScreenTwoState extends State<regScreenTwo> {
                         ElevatedButton(
                           child: Text('Submit'),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.purpleAccent, // Background color
-                            onPrimary: Colors.white70,
+                            primary: Colors.grey[600], // Background color
+                            onPrimary: Colors.grey[500],
 
                             //splashFactory: Colors.grey[200],
                             shape: RoundedRectangleBorder(
@@ -453,20 +450,6 @@ class _regScreenTwoState extends State<regScreenTwo> {
                             }
                           },
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextButton(
-                            child: Text('Register with phone number'),
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil(context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                return registration_Phn();
-                              }), (r) {
-                                return false;
-                              });
-                            }),
                         SizedBox(
                           height: 20,
                         ),

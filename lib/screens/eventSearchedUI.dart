@@ -81,6 +81,7 @@ class _eventSearchedState extends State<eventSearched> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey[700],
         title: Text("Event"),
         centerTitle: true,
       ),

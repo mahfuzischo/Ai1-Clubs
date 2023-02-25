@@ -55,6 +55,7 @@ class _regScreen1State extends State<regScreenOne> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.grey[700],
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -71,7 +72,6 @@ class _regScreen1State extends State<regScreenOne> {
             });
           },
         ),
-        backgroundColor: Colors.purple[300],
         centerTitle: true,
         title: Text(
           'Registration',

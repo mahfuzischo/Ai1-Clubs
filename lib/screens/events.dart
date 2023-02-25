@@ -19,7 +19,7 @@ class _eventScreenState extends State<eventScreen> {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.white60,
+      backgroundColor: Colors.grey[700],
       appBar: AppBar(
           backgroundColor: Colors.purple[200],
           centerTitle: false,

@@ -219,7 +219,7 @@ class _addEventState extends State<addEvent> {
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
+        backgroundColor: Colors.grey[700],
         title: const Text("Create Event"),
         centerTitle: false,
         actions: [

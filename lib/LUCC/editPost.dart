@@ -220,7 +220,7 @@ class _editPostState extends State<editPost> {
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
+        backgroundColor: Colors.grey[700],
         title: const Text("Edit Post"),
         centerTitle: false,
       ),

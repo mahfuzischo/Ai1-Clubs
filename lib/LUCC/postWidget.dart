@@ -13,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ai1_clubs/LUCC/news_feed.dart';
 import 'package:ai1_clubs/LUCC/editPost.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -133,11 +132,31 @@ class _postWidgetState extends State<postWidget> {
                         },
                         onSelected: (value) {
                           if (value == 0) {
-                            deletePost(
-                              widget.snap['postId'].toString(),
-                            );
-
-                            Navigator.of(context).pop();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Delete"),
+                                    content: Text(
+                                        "Are you sure you want to delete this post?"),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(context);
+                                          },
+                                          child: Text("Cancel")),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            await deletePost(
+                                              widget.snap['postId'].toString(),
+                                            ).then((value) =>
+                                                Navigator.of(context).pop());
+                                          },
+                                          child: Text("Yes"))
+                                    ],
+                                  );
+                                  Navigator.of(context).pop(context);
+                                });
                           }
                           if (value == 1) {
                             Navigator.of(context).push(
@@ -219,7 +238,7 @@ class _postWidgetState extends State<postWidget> {
                     DateFormat.yMMMd()
                         .format(widget.snap['datePublished'].toDate()),
                     style: const TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black87,
                     ),
                   ),
                   //   padding: const EdgeInsets.symmetric(vertical: 4),

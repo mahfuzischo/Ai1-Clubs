@@ -81,6 +81,7 @@ class _mailVerficationState extends State<mailVerfication> {
       ? logIn()
       : Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.grey[700],
             title: Text("Verify Email"),
             centerTitle: true,
           ),

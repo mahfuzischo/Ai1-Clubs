@@ -13,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ai1_clubs/LUCC/news_feed.dart';
 import 'package:ai1_clubs/LUCC/editPost.dart';
 import 'package:ai1_clubs/methods.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -82,6 +81,7 @@ class _postSearchedState extends State<postSearched> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey[700],
         title: Text("Post"),
         centerTitle: true,
       ),

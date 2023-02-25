@@ -21,7 +21,7 @@ class _searchPostState extends State<searchPost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white60,
+        backgroundColor: Colors.grey[700],
         leading: IconButton(
             icon: Icon(
               Icons.arrow_back,

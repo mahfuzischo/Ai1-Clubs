@@ -221,7 +221,7 @@ class _editEventState extends State<editEvent> {
     provider _userProvider = Provider.of<provider>(context, listen: false);
     String id = widget.reqID;
     return Scaffold(
-      backgroundColor: Colors.white38,
+      backgroundColor: Colors.grey[700],
       appBar: AppBar(
         backgroundColor: Colors.purple[200],
         title: const Text("Edit Post"),

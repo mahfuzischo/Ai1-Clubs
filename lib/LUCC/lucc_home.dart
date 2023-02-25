@@ -3,7 +3,6 @@ import 'package:ai1_clubs/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/screens/events.dart';
 import 'package:ai1_clubs/LUCC/lucc_album.dart';
-import 'package:ai1_clubs/LUCC/news_feed.dart';
 
 class LUCC_Home extends StatefulWidget {
   const LUCC_Home({super.key});
@@ -19,7 +18,7 @@ class _LUCC_HomeState extends State<LUCC_Home> {
       appBar: AppBar(
         title: Text("LUCC"),
         centerTitle: true,
-        backgroundColor: Colors.purple[300],
+        backgroundColor: Colors.grey[600],
         elevation: 0,
         leading: IconButton(
           icon: Icon(
@@ -62,7 +61,7 @@ class _LUCC_HomeState extends State<LUCC_Home> {
                       fontSize: 25),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.purple[200], // Background color
+                  primary: Colors.grey[500], // Background color
                   onPrimary: Colors.grey[400],
 
                   //splashFactory: Colors.grey[200],
@@ -96,7 +95,7 @@ class _LUCC_HomeState extends State<LUCC_Home> {
                       fontSize: 25),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.purple[300], // Background color
+                  primary: Colors.grey[500], // Background color
                   onPrimary: Colors.grey[400],
 
                   //splashFactory: Colors.grey[200],
@@ -130,7 +129,7 @@ class _LUCC_HomeState extends State<LUCC_Home> {
                       fontSize: 25),
                 ),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.purple[300], // Background color
+                  primary: Colors.grey[500], // Background color
                   onPrimary: Colors.grey[400],
 
                   //splashFactory: Colors.grey[200],

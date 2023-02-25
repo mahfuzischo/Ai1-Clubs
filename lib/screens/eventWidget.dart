@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ai1_clubs/screens/editEvent.dart';
 import 'package:ai1_clubs/screens/registration.dart';
 import 'package:intl/intl.dart';
 import 'package:ai1_clubs/LUCC/comments.dart';
@@ -11,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ai1_clubs/LUCC/news_feed.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class eventWidget extends StatefulWidget {
@@ -40,7 +40,7 @@ class _eventWidgetState extends State<eventWidget> {
   String userName = '';
   int commentLen = 0;
 
-  Future<String> deletePost(String eventId) async {
+  Future<String> deleteEvent(String eventId) async {
     String res = "Some error occurred";
     try {
       await _fire.collection('events').doc(eventId).delete();
@@ -116,44 +116,57 @@ class _eventWidgetState extends State<eventWidget> {
                   ),
                 ),
                 widget.snap['uid'].toString() == _auth.currentUser!.uid
-                    ? IconButton(
-                        onPressed: () {
-                          showDialog(
-                            useRootNavigator: false,
-                            context: context,
-                            builder: (context) {
-                              return Dialog(
-                                child: ListView(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16),
-                                    shrinkWrap: true,
-                                    children: [
-                                      'Delete',
-                                    ]
-                                        .map(
-                                          (e) => InkWell(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                        horizontal: 16),
-                                                child: Text(e),
-                                              ),
-                                              onTap: () {
-                                                deletePost(
-                                                  widget.snap['eventId']
-                                                      .toString(),
-                                                );
-
-                                                Navigator.of(context).pop();
-                                              }),
-                                        )
-                                        .toList()),
-                              );
-                            },
-                          );
+                    ? PopupMenuButton(
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem<int>(
+                              value: 0,
+                              child: Text("Delete"),
+                            ),
+                            PopupMenuItem<int>(
+                              value: 1,
+                              child: Text("Edit"),
+                            ),
+                          ];
                         },
-                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) {
+                          if (value == 0) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Delete"),
+                                    content: Text(
+                                        "Are you sure you want to delete this event?"),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(context);
+                                          },
+                                          child: Text("Cancel")),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            await deleteEvent(
+                                              widget.snap['eventId'].toString(),
+                                            ).then((value) =>
+                                                Navigator.of(context).pop());
+                                          },
+                                          child: Text("Yes"))
+                                    ],
+                                  );
+                                  Navigator.of(context).pop(context);
+                                });
+                          }
+                          if (value == 1) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => editEvent(
+                                  reqID: widget.snap['eventId'].toString(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       )
                     : Container(),
               ],
@@ -225,30 +238,10 @@ class _eventWidgetState extends State<eventWidget> {
                     DateFormat.yMMMd()
                         .format(widget.snap['datePublished'].toDate()),
                     style: const TextStyle(
-                      color: Colors.blueGrey,
+                      color: Colors.black87,
                     ),
                   ),
                   //   padding: const EdgeInsets.symmetric(vertical: 4),
-                ),
-                InkWell(
-                  child: Container(
-                    child: Text(
-                      'View all $commentLen comments',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.blueGrey,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                  ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => comments(
-                        isPost: false,
-                        postId: widget.snap['eventId'].toString(),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),

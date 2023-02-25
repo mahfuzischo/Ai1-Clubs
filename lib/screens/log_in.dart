@@ -19,26 +19,12 @@ class _logInState extends State<logIn> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.purple[300],
+        backgroundColor: Colors.grey[600],
         title: Text(
           'Log in',
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 2),
         ),
-        /* leading: IconButton(
-            icon: Icon(
-              Icons.home,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                return home();
-              }), (r) {
-                return false;
-              });
-            },
-          )*/
       ),
       body: validForm(),
     );
@@ -75,33 +61,6 @@ class _validFormState extends State<validForm> {
     super.dispose();
   }
 
-  /*singin() async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: uemail, password: pass);
-
-      var fbaseusr = userCredential.user;
-      print(fbaseusr!.uid);
-      if (fbaseusr.uid.isNotEmpty) {
-        Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return home();
-        }), (r) {
-          return false;
-        });
-      } else {
-        print("Invalid uid");
-      }
-    } on FirebaseAuthException catch (e) {
-      print(e.toString());
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
-      }
-    }
-  }
-*/
   @override
   void initState() {
     super.initState();
@@ -182,13 +141,13 @@ class _validFormState extends State<validForm> {
           ElevatedButton(
             child: Text('Submit'),
             style: ElevatedButton.styleFrom(
-              primary: Colors.purpleAccent, // Background color
-              onPrimary: Colors.white70,
+              primary: Colors.grey[600], // Background color
+              onPrimary: Colors.grey[500],
 
               //splashFactory: Colors.grey[200],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0),
-                side: BorderSide(color: Theme.of(context).primaryColor),
+                side: BorderSide(color: Colors.grey),
               ),
             ),
             onPressed: () async {

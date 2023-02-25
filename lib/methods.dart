@@ -39,6 +39,13 @@ class methods {
     return studentData;
   }
 
+  Future<model.UseR> getUserData(String id) async {
+    final snapshot =
+        await _firestore.collection('Users').where("uid", isEqualTo: id).get();
+    final usrData = snapshot.docs.map((e) => UseR.fromSnap(e)).single;
+    return usrData;
+  }
+
   Future<model.Event> getEventData(String id) async {
     final snapshot = await _firestore
         .collection('events')

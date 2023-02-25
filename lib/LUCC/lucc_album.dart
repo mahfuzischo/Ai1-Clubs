@@ -1,7 +1,6 @@
-import 'package:ai1_clubs/screens/registration.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -105,6 +104,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.grey[600],
           title: Text("LUCC Album"),
           centerTitle: true,
           actions: <Widget>[
@@ -126,7 +126,6 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
               },
             ),
           ],
-          backgroundColor: Colors.purple[300],
           elevation: 0,
         ),
         body: LiquidPullToRefresh(
@@ -134,8 +133,8 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
           child: gg(),
           onRefresh: refresh,
           height: 250,
-          backgroundColor: Colors.purple[300],
-          color: Colors.orange[200],
+          backgroundColor: Colors.grey[600],
+          color: Colors.green[200],
           showChildOpacityTransition: true,
         ));
   }
@@ -160,12 +159,48 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
               ),
               itemBuilder: (context, index) {
                 DocumentSnapshot snap = (snapshot.data! as dynamic).docs[index];
-                return Container(
+
+                return InkWell(
+                  onTap: () async {
+                    showDialog(
+                        context: context,
+                        builder: ((context) {
+                          return Center(
+                            child: Material(
+                              type: MaterialType.transparency,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.grey[600]),
+                                padding: EdgeInsets.all(15),
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                height: 320,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(5),
+                                  child: Image(
+                                    image: NetworkImage(snap['photoURL']),
+                                    fit: BoxFit.cover,
+                                    width: 300,
+                                    height: 300,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }));
+                  },
                   child: Image(
                     image: NetworkImage(snap['photoURL']),
                     fit: BoxFit.cover,
                   ),
                 );
+
+                // return Container(
+                //   child: Image(
+                //     image: NetworkImage(snap['photoURL']),
+                //     fit: BoxFit.cover,
+                //   ),
+                // );
               },
             );
           }
@@ -173,25 +208,5 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
             child: CircularProgressIndicator(),
           );
         });
-  }
-
-  Widget getWidget() {
-    print(x);
-    _listFiles();
-    print('URL : ');
-    // print(downloadURL('1'));
-
-    // lucc_images();
-    //lucc_print();
-    //pushImg();
-
-    return GridView.count(
-      crossAxisCount: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      children: [...lucc_imgList],
-    );
-
-    //  return Text('Fuck you!!!');
   }
 }

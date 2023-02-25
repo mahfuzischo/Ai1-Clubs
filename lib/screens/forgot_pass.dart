@@ -1,7 +1,5 @@
-import 'package:ai1_clubs/screens/log_in2.dart';
+import 'package:ai1_clubs/screens/log_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
 
 class forgotPass extends StatefulWidget {
@@ -39,7 +37,7 @@ class _forgotPassState extends State<forgotPass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[300],
+        backgroundColor: Colors.grey[700],
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -79,7 +77,7 @@ class _forgotPassState extends State<forgotPass> {
               ElevatedButton(
                   child: Text('Submit'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.purple[300], // Background color
+                    primary: Colors.grey[600], // Background color
                     onPrimary: Colors.grey[900],
 
                     //splashFactory: Colors.grey[200],
@@ -93,8 +91,8 @@ class _forgotPassState extends State<forgotPass> {
                       print(_emailController.text.trim());
                       passReset();
 
-                      // Navigator.of(context).push(
-                      //  MaterialPageRoute(builder: (context) => login()));
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => logIn()));
                     } else {
                       print("Invalid input");
                       showDialog(

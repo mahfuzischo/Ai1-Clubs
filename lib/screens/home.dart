@@ -1,3 +1,5 @@
+import 'package:ai1_clubs/screens/requestJoin.dart';
+import 'package:ai1_clubs/screens/requests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +15,7 @@ class home extends StatefulWidget {
 }
 
 bool isAdmin = false;
+bool isLuccUser = false;
 bool isRestricted = false;
 
 class _homeState extends State<home> {
@@ -23,7 +26,7 @@ class _homeState extends State<home> {
     var docSnapshot = await collection.doc(uid).get();
     if (docSnapshot.exists) {
       Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-      var value = data['uid'].toString();
+      var value = data['uid'].toString().trim();
       if (uid == value) {
         isAdmin = true;
       }
@@ -35,28 +38,49 @@ class _homeState extends State<home> {
     return uname;
   }
 
-  Future<String> getRestriction() async {
+  Future<String> getLuccUser() async {
     dynamic uid = FirebaseAuth.instance.currentUser!.uid.toString();
     String uname = '';
-    var collection = FirebaseFirestore.instance.collection('restricted');
+    var collection = FirebaseFirestore.instance.collection('usersLucc');
     var docSnapshot = await collection.doc(uid).get();
     if (docSnapshot.exists) {
+      print("Exists");
       Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-      var value = data['uid'].toString();
+      var value = data['uid'].toString().trim();
       if (uid == value) {
-        isRestricted = true;
-        print("Restricted:" + uid);
+        isLuccUser = true;
       }
 
       uname = value;
+      print(uid);
+      print(uname);
     }
     return uname;
   }
+
+  // Future<String> getRestriction() async {
+  //   dynamic uid = FirebaseAuth.instance.currentUser!.uid.toString();
+  //   String uname = '';
+  //   var collection = FirebaseFirestore.instance.collection('restricted');
+  //   var docSnapshot = await collection.doc(uid).get();
+  //   if (docSnapshot.exists) {
+  //     Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+  //     var value = data['uid'].toString();
+  //     if (uid == value) {
+  //       isRestricted = true;
+  //       print("Restricted:" + uid);
+  //     }
+
+  //     uname = value;
+  //   }
+  //   return uname;
+  // }
 
   @override
   void initState() {
     super.initState();
     addData();
+    getLuccUser();
     getAdmin();
   }
 
@@ -79,27 +103,53 @@ class _homeState extends State<home> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
-          backgroundColor: Colors.purpleAccent[300],
+          backgroundColor: Colors.grey[700],
           centerTitle: true,
           title: Text(
             'Home',
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 2),
           ),
-          leading: CircleAvatar(
-            radius: 8,
-            child: IconButton(
-              icon: Icon(
-                size: 30,
-                Icons.person_sharp,
-                color: Colors.white,
-              ),
-              onPressed: () async {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => profile()));
-              },
-            ),
-          ),
+          leading: isAdmin == true
+              ? PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Join Requests"),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: Text("Profile"),
+                      ),
+                    ];
+                  },
+                  onSelected: (value) {
+                    if (value == 0) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => requests()));
+                    }
+                    if (value == 1) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => profile()));
+                    }
+                  },
+                )
+              : CircleAvatar(
+                  backgroundColor: Colors.grey[500],
+                  radius: 8,
+                  child: IconButton(
+                    icon: Icon(
+                      size: 30,
+                      Icons.person_sharp,
+                      color: Colors.white,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => profile()));
+                    },
+                  ),
+                ),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -107,17 +157,37 @@ class _homeState extends State<home> {
                 color: Colors.white,
               ),
               onPressed: () async {
-                if (FirebaseAuth.instance.currentUser == null) {
-                  ShowSnackBarText("Already logged out");
-                } else {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return logIn();
-                  }), (r) {
-                    return false;
-                  });
-                }
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Logout"),
+                        content: Text("Are you sure you want to log out?"),
+                        actions: <Widget>[
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(context);
+                              },
+                              child: Text("Cancel")),
+                          ElevatedButton(
+                              onPressed: () async {
+                                if (FirebaseAuth.instance.currentUser == null) {
+                                  ShowSnackBarText("Already logged out");
+                                } else {
+                                  await FirebaseAuth.instance.signOut();
+                                  Navigator.pushAndRemoveUntil(context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                    return logIn();
+                                  }), (r) {
+                                    return false;
+                                  });
+                                }
+                              },
+                              child: Text("Yes"))
+                        ],
+                      );
+                    });
               },
             )
           ]),
@@ -132,12 +202,12 @@ class _homeState extends State<home> {
                 padding: EdgeInsets.all(8),
                 child: InkWell(
                   onTap: () {
-                    if (isRestricted == false) {
+                    if (isLuccUser == true) {
                       Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => LUCC_Home()));
                     } else {
-                      ShowSnackBarText(
-                          "The user is currently rstricted. Please contact the admin");
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => requestJoin()));
                     }
                   },
                   splashColor: Colors.blue,

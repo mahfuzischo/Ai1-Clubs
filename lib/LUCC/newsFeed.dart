@@ -20,7 +20,7 @@ class _FeedScreenState extends State<FeedScreen> {
     return Scaffold(
       backgroundColor: Colors.white60,
       appBar: AppBar(
-          backgroundColor: Colors.purple[200],
+          backgroundColor: Colors.grey[700],
           centerTitle: false,
           title: Text("Posts"),
           leading: IconButton(

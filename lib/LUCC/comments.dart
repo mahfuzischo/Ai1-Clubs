@@ -59,7 +59,7 @@ class _commentsState extends State<comments> {
     var isPost = widget.isPost;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
+        backgroundColor: Colors.grey[700],
         title: const Text(
           'Comments',
         ),

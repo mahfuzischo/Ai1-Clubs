@@ -219,7 +219,7 @@ class _addPostState extends State<addPost> {
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
-        backgroundColor: Colors.purple[200],
+        backgroundColor: Colors.grey[700],
         title: const Text("Create Post"),
         centerTitle: false,
         actions: [
