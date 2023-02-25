@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:ai1_clubs/screens/registration.dart';
 import 'package:intl/intl.dart';
 import 'package:ai1_clubs/LUCC/comments.dart';
-import 'package:ai1_clubs/userData.dart' as model;
-import 'package:ai1_clubs/postData.dart' as model;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

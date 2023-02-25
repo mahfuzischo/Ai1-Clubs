@@ -137,59 +137,7 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
           backgroundColor: Colors.purple[300],
           color: Colors.orange[200],
           showChildOpacityTransition: true,
-        )
-        // Column(
-        //   children: [
-
-        //     if (lucc_imgList.length != 0) ...[
-        //       getWidget()
-        //     ] else ...[
-        //       Center(
-        //         child: CircularProgressIndicator(
-        //           value: controller.value,
-        //           semanticsLabel: 'Circular progress indicator',
-        //         ),
-        //       )
-        //     ]
-        //   ],
-        // )
-        /*RefreshIndicator(
-            onRefresh: () async {
-              getWidget();
-            },
-            child: gg())*/
-
-        /*FutureBuilder(
-          future: storage.ref('lucc_album/lucc_img1.jpg').getDownloadURL(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                print('object');
-              } else if (snapshot.hasData) {
-                return Container(
-                    width: 300,
-                    height: 250,
-                    child: Image.network(
-                      snapshot.data!,
-                      fit: BoxFit.cover,
-                    ));
-              }
-            } else {
-              if (snapshot.connectionState == ConnectionState.waiting ||
-                  !snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return Container(
-                child: Text('Fuck you!!!!!'),
-              );
-            }
-            return Container(
-              child: Text('Fuck you  again!!!!!'),
-            );
-          }),*/
-        );
+        ));
   }
 
   Widget gg() {
@@ -199,7 +147,8 @@ class _lucc_albumState extends State<lucc_album> with TickerProviderStateMixin {
             .where('photoURL', isNotEqualTo: null)
             .get(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.waiting) {
             return GridView.builder(
               shrinkWrap: true,
               itemCount: (snapshot.data! as dynamic).docs.length,

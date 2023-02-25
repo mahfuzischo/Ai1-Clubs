@@ -1,3 +1,4 @@
+import 'package:ai1_clubs/screens/eventWidget.dart';
 import 'package:ai1_clubs/screens/events.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   .collection('events')
                   .where(
                     'description',
-                    isGreaterThanOrEqualTo: searchController.text,
+                    isGreaterThanOrEqualTo: searchController.text.toString(),
                   )
                   .get(),
               builder: (context, snapshot) {
@@ -74,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             .toString());
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => postWidget(
+                            builder: (context) => eventWidget(
                               snap: (snapshot.data! as dynamic).docs[index]
                                   ['eventId'],
                             ),

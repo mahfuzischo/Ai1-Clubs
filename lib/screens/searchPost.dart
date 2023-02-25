@@ -1,8 +1,9 @@
+import 'package:ai1_clubs/LUCC/postSearchedUI.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ai1_clubs/screens/profile.dart';
-import 'package:ai1_clubs/LUCC/postWidget.dart';
+import 'package:ai1_clubs/LUCC/postSearchedUI.dart';
 import 'package:ai1_clubs/LUCC/newsFeed.dart';
 
 class searchPost extends StatefulWidget {
@@ -72,7 +73,7 @@ class _searchPostState extends State<searchPost> {
                             .toString());
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => postWidget(
+                            builder: (context) => postSearched(
                               snap: (snapshot.data! as dynamic).docs[index]
                                   ['postId'],
                             ),

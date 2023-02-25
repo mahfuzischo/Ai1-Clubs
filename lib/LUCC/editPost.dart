@@ -22,6 +22,7 @@ class editPost extends StatefulWidget {
 class _editPostState extends State<editPost> {
   final TextEditingController _captionController = TextEditingController();
 
+  bool isLoading = false;
   File? _image;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore fire = FirebaseFirestore.instance;
@@ -149,6 +150,64 @@ class _editPostState extends State<editPost> {
     return dldURL;
   }
 
+  Future<String> _updatePost(
+      String uid,
+      String userName,
+      String photoURL,
+      String description,
+      dynamic datePublished,
+      dynamic postId,
+      String picUrl,
+      dynamic post) async {
+    setState(() {
+      isLoading = true;
+    });
+    String result = "Error occured";
+    String v = _captionController.toString();
+    try {
+      print("caption  :  $v");
+      String postUrl =
+          picUrl != null ? picUrl : await _uploadImg("posts", _image!);
+      String photoUrl = await getPicUrl();
+
+      print("Pic url" + postUrl);
+
+      Post postUpload = Post(
+          description: description,
+          uid: uid,
+          userName: userName,
+          postId: widget.reqID,
+          datePublished: datePublished,
+          photoURL: photoUrl,
+          postUrl: postUrl);
+
+      fire.collection('posts').doc(postId).update(post.toJson());
+
+      result = "Successful";
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print(e.toString());
+      ShowSnackBarText(e.toString());
+    }
+    if (result == "Successful") {
+      ShowSnackBarText("Post successfully updated.");
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return const FeedScreen();
+      }), (r) {
+        return false;
+      });
+    } else {
+      ShowSnackBarText("Error updating post.");
+    }
+    return result;
+  }
+
   void dispose() {
     super.dispose();
     _captionController.dispose();
@@ -158,197 +217,147 @@ class _editPostState extends State<editPost> {
   Widget build(BuildContext context) {
     String id = widget.reqID;
     provider _userProvider = Provider.of<provider>(context, listen: false);
-    return Container(
-      child: FutureBuilder(
+    return Scaffold(
+      backgroundColor: Colors.white38,
+      appBar: AppBar(
+        backgroundColor: Colors.purple[200],
+        title: const Text("Edit Post"),
+        centerTitle: false,
+      ),
+      body: FutureBuilder(
         future: methods().getPostData(widget.reqID),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.none) {
             return Text("Error");
-          } else if (snapshot.connectionState == ConnectionState.done) {
+          } else if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
-              bool isLoading = false;
               Post post = snapshot.data as Post;
 
               final description = TextEditingController(text: post.description);
-              String picUrl = post.postUrl;
+              dynamic picUrl = post.postUrl.toString();
               final postId = id;
 
-              Future<String> _updatePost(
-                  String uid, String userName, String photoURL) async {
-                setState(() {
-                  isLoading = true;
-                });
-                String result = "Error occured";
-                String v = _captionController.toString();
-                try {
-                  print("caption  :  $v");
-                  String postUrl = picUrl != null
-                      ? picUrl
-                      : await _uploadImg("posts", _image!);
-                  String photoUrl = await getPicUrl();
-
-                  print("Pic url" + postUrl);
-
-                  Post postUpload = Post(
-                      description: description.text.trim(),
-                      uid: uid,
-                      userName: userName,
-                      postId: post.postId,
-                      datePublished: post.datePublished,
-                      photoURL: photoUrl,
-                      postUrl: postUrl);
-
-                  fire.collection('posts').doc(postId).update(post.toJson());
-
-                  result = "Successful";
-                  setState(() {
-                    isLoading = false;
-                  });
-                } catch (e) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  print(e.toString());
-                  ShowSnackBarText(e.toString());
-                }
-                if (result == "Successful") {
-                  ShowSnackBarText("Post successfully updated.");
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return const FeedScreen();
-                  }), (r) {
-                    return false;
-                  });
-                } else {
-                  ShowSnackBarText("Error updating post.");
-                }
-                return result;
-              }
-
-              Scaffold(
-                backgroundColor: Colors.white38,
-                appBar: AppBar(
-                  backgroundColor: Colors.purple[200],
-                  title: const Text("Create Post"),
-                  centerTitle: false,
-                  actions: [
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                child: Column(
+                  children: [
+                    isLoading
+                        ? const LinearProgressIndicator()
+                        : const Padding(padding: EdgeInsets.only(top: 0.0)),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            _userProvider.getUser.photoUrl,
+                          ),
+                          radius: 25,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          _userProvider.getUser.userName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextField(
+                        controller: description,
+                        decoration: InputDecoration(
+                            hintText: "Write a caption...",
+                            label: Text("Write a caption..."),
+                            border: OutlineInputBorder()),
+                        maxLines: 8,
+                      ),
+                    ),
+                    Divider(
+                      height: 20,
+                    ),
+                    Container(
+                        child: _image != null || picUrl != null
+                            ? SizedBox(
+                                height: 250,
+                                width: 200,
+                                child: picUrl != null
+                                    ? InkWell(
+                                        onDoubleTap: () {
+                                          setState(() {
+                                            picUrl == null;
+                                            FirebaseFirestore.instance
+                                                .collection('posts')
+                                                .doc(postId)
+                                                .set({'postURL': ''});
+                                            ShowSnackBarText(
+                                                "Image successfully removed");
+                                          });
+                                        },
+                                        splashColor: Colors.blue,
+                                        child: Ink.image(
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                            image: NetworkImage("$picUrl")),
+                                      )
+                                    : InkWell(
+                                        onDoubleTap: () {
+                                          setState(() {
+                                            _image == null;
+                                            ShowSnackBarText(
+                                                "Image successfully removed");
+                                          });
+                                        },
+                                        splashColor: Colors.blue,
+                                        child: Ink.image(
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                            image: FileImage(_image!)),
+                                      ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                child: Center(
+                                  child: IconButton(
+                                    color: Color.fromRGBO(238, 255, 65, 1),
+                                    tooltip: "Upload Picture",
+                                    iconSize: 50,
+                                    icon: const Icon(
+                                      Icons.upload,
+                                    ),
+                                    onPressed: () => _uploadImage(context),
+                                  ),
+                                ),
+                              )),
                     TextButton(
                         onPressed: () {
                           _updatePost(
-                            _userProvider.getUser.uid,
-                            _userProvider.getUser.userName,
-                            _userProvider.getUser.photoUrl,
-                          );
+                              _userProvider.getUser.uid,
+                              _userProvider.getUser.userName,
+                              _userProvider.getUser.photoUrl,
+                              description.text.trim(),
+                              post.datePublished,
+                              id,
+                              picUrl,
+                              post);
                         },
                         child: const Text(
-                          "Post",
+                          "Update",
                           style: TextStyle(
                               color: Colors.blueAccent,
                               fontWeight: FontWeight.bold,
                               fontSize: 15),
                         ))
                   ],
-                ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
-                    child: Column(
-                      children: [
-                        isLoading
-                            ? const LinearProgressIndicator()
-                            : const Padding(padding: EdgeInsets.only(top: 0.0)),
-                        const Divider(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                _userProvider.getUser.photoUrl,
-                              ),
-                              radius: 25,
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              _userProvider.getUser.userName,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: TextField(
-                            controller: description,
-                            decoration: InputDecoration(
-                                hintText: "Write a caption...",
-                                label: Text("Write a caption..."),
-                                border: OutlineInputBorder()),
-                            maxLines: 8,
-                          ),
-                        ),
-                        Divider(
-                          height: 20,
-                        ),
-                        Container(
-                            child: _image != null && picUrl == null
-                                ? SizedBox(
-                                    height: 250,
-                                    width: 200,
-                                    child: picUrl != null
-                                        ? InkWell(
-                                            onDoubleTap: () {
-                                              setState(() {
-                                                picUrl = '';
-                                                ShowSnackBarText(
-                                                    "Image successfully removed");
-                                              });
-                                            },
-                                            splashColor: Colors.blue,
-                                            child: Ink.image(
-                                                fit: BoxFit.cover,
-                                                width: 50,
-                                                height: 50,
-                                                image: NetworkImage("$picUrl")),
-                                          )
-                                        : InkWell(
-                                            onDoubleTap: () {
-                                              setState(() {
-                                                _image = null;
-                                                ShowSnackBarText(
-                                                    "Image successfully removed");
-                                              });
-                                            },
-                                            splashColor: Colors.blue,
-                                            child: Ink.image(
-                                                fit: BoxFit.cover,
-                                                width: 50,
-                                                height: 50,
-                                                image: FileImage(_image!)),
-                                          ),
-                                  )
-                                : Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                    child: Center(
-                                      child: IconButton(
-                                        color: Color.fromRGBO(238, 255, 65, 1),
-                                        tooltip: "Upload Picture",
-                                        iconSize: 50,
-                                        icon: const Icon(
-                                          Icons.upload,
-                                        ),
-                                        onPressed: () => _uploadImage(context),
-                                      ),
-                                    ),
-                                  ))
-                      ],
-                    ),
-                  ),
                 ),
               );
             } else {

@@ -75,19 +75,6 @@ class _postWidgetState extends State<postWidget> {
     }
   }
 
-  // Future getUserDetails() async {
-  //   dynamic Uid = _auth.currentUser!.uid;
-  //   var collection = _fire.collection('Users');
-  //   var docSnapshot = await collection.doc(Uid).get();
-  //   if (docSnapshot.exists) {
-  //     Map<String, dynamic>? data = docSnapshot.data();
-  //     var value = data?['userName'];
-  //     userName = value;
-  //     print(userName);
-  //     return userName;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -98,7 +85,6 @@ class _postWidgetState extends State<postWidget> {
       ),
       child: Column(
         children: [
-          // HEADER SECTION OF THE POST
           Container(
             padding: const EdgeInsets.symmetric(
               vertical: 4,
@@ -157,7 +143,7 @@ class _postWidgetState extends State<postWidget> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => editPost(
-                                  reqID: widget.snap['postId'],
+                                  reqID: widget.snap['postId'].toString(),
                                 ),
                               ),
                             );
@@ -168,7 +154,6 @@ class _postWidgetState extends State<postWidget> {
               ],
             ),
           ),
-
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
@@ -238,26 +223,6 @@ class _postWidgetState extends State<postWidget> {
                     ),
                   ),
                   //   padding: const EdgeInsets.symmetric(vertical: 4),
-                ),
-                InkWell(
-                  child: Container(
-                    child: Text(
-                      'View all $commentLen comments',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                  ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => comments(
-                        isPost: true,
-                        postId: widget.snap['postId'].toString(),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),

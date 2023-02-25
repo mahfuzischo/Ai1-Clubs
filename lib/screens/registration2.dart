@@ -403,6 +403,10 @@ class _regScreenTwoState extends State<regScreenTwo> {
 
                                   User? _user = _auth.currentUser;
                                   String? photoUrl = await uploadImg(img!);
+                                  if (photoUrl == null) {
+                                    photoUrl =
+                                        'https://i.stack.imgur.com/l60Hf.png';
+                                  }
 
                                   var _userMap = {
                                     'uid': _user!.uid,
@@ -411,9 +415,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                     'batch': _batch,
                                     'dept': _dept,
                                     'student_id': widget.reqId,
-                                    'photoURL': photoUrl == null
-                                        ? 'https://i.stack.imgur.com/l60Hf.png'
-                                        : photoUrl,
+                                    'photoURL': photoUrl
                                   };
                                   print({_userMap});
 

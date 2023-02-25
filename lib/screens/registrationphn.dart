@@ -61,7 +61,7 @@ class _registration_PhnState extends State<registration_Phn> {
           return false;
         });
       },
-      codeSent: (String verificationId, int? forceResendingToken) {
+      codeSent: (dynamic verificationId, int? forceResendingToken) {
         ShowSnackBarText('OTP sent');
         print("Verification id: ");
         print(verId.toString());
@@ -103,7 +103,7 @@ class _registration_PhnState extends State<registration_Phn> {
     print("Registered  otp map " + _phn);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => logIn(),
+        builder: (context) => home(),
       ),
     );
 
