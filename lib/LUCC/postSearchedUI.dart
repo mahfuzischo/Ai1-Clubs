@@ -148,17 +148,44 @@ class _postSearchedState extends State<postSearched> {
                                     },
                                     onSelected: (value) {
                                       if (value == 0) {
-                                        deletePost(
-                                          post.postId,
-                                        );
-
-                                        Navigator.of(context).pop();
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text("Delete"),
+                                                content: Text(
+                                                    "Are you sure you want to delete this post?"),
+                                                actions: <Widget>[
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(context);
+                                                      },
+                                                      child: Text("Cancel")),
+                                                  ElevatedButton(
+                                                      onPressed: () async {
+                                                        await deletePost(
+                                                          widget.snap['postId']
+                                                              .toString(),
+                                                        ).then((value) =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop());
+                                                      },
+                                                      child: Text("Yes"))
+                                                ],
+                                              );
+                                              Navigator.of(context)
+                                                  .pop(context);
+                                            });
                                       }
                                       if (value == 1) {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                editPost(reqID: post.postId),
+                                            builder: (context) => editPost(
+                                              reqID: widget.snap['postId']
+                                                  .toString(),
+                                            ),
                                           ),
                                         );
                                       }

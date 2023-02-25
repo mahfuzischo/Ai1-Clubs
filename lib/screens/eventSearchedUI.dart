@@ -18,6 +18,7 @@ import 'package:ai1_clubs/methods.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import '../eventData.dart';
+import 'editEvent.dart';
 
 class eventSearched extends StatefulWidget {
   final snap;
@@ -51,10 +52,10 @@ class _eventSearchedState extends State<eventSearched> {
   String userName = '';
   int commentLen = 0;
 
-  Future<String> deletePost(String postId) async {
+  Future<String> deleteEvent(String eventId) async {
     String res = "Some error occurred";
     try {
-      await _fire.collection('events').doc(postId).delete();
+      await _fire.collection('events').doc(eventId).delete();
       res = 'success';
     } catch (e) {
       res = e.toString();
@@ -148,17 +149,44 @@ class _eventSearchedState extends State<eventSearched> {
                                     },
                                     onSelected: (value) {
                                       if (value == 0) {
-                                        deletePost(
-                                          event.eventId,
-                                        );
-
-                                        Navigator.of(context).pop();
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text("Delete"),
+                                                content: Text(
+                                                    "Are you sure you want to delete this event?"),
+                                                actions: <Widget>[
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop(context);
+                                                      },
+                                                      child: Text("Cancel")),
+                                                  ElevatedButton(
+                                                      onPressed: () async {
+                                                        await deleteEvent(
+                                                          widget.snap['eventId']
+                                                              .toString(),
+                                                        ).then((value) =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop());
+                                                      },
+                                                      child: Text("Yes"))
+                                                ],
+                                              );
+                                              Navigator.of(context)
+                                                  .pop(context);
+                                            });
                                       }
                                       if (value == 1) {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                editPost(reqID: event.eventId),
+                                            builder: (context) => editEvent(
+                                              reqID: widget.snap['eventId']
+                                                  .toString(),
+                                            ),
                                           ),
                                         );
                                       }
