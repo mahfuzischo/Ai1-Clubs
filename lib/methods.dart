@@ -7,6 +7,8 @@ import 'package:ai1_clubs/studentData.dart' as model;
 import 'package:ai1_clubs/studentData.dart';
 import 'package:ai1_clubs/postData.dart' as model;
 import 'package:ai1_clubs/postData.dart';
+import 'package:ai1_clubs/eventData.dart';
+import 'package:ai1_clubs/eventData.dart' as model;
 
 class methods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -35,6 +37,15 @@ class methods {
         .get();
     final studentData = snapshot.docs.map((e) => std.fromSnap(e)).single;
     return studentData;
+  }
+
+  Future<model.Event> getEventData(String id) async {
+    final snapshot = await _firestore
+        .collection('events')
+        .where("eventId", isEqualTo: id)
+        .get();
+    final eventData = snapshot.docs.map((e) => Event.fromSnap(e)).single;
+    return eventData;
   }
 
   Future<model.Post> getPostData(String postId) async {

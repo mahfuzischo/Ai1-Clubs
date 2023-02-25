@@ -393,7 +393,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                 try {
                                   UserCredential userCredential = await _auth
                                       .createUserWithEmailAndPassword(
-                                    email: _uemail,
+                                    email: student.email,
                                     password: _pass,
                                   );
 
@@ -411,7 +411,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                   var _userMap = {
                                     'uid': _user!.uid,
                                     'userName': _uname,
-                                    'email': _user.email,
+                                    'email': student.email,
                                     'batch': _batch,
                                     'dept': _dept,
                                     'student_id': widget.reqId,

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:ai1_clubs/LUCC/newsFeed.dart';
-import 'package:ai1_clubs/postData.dart';
+import 'package:ai1_clubs/eventData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,15 +11,15 @@ import 'package:ai1_clubs/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:ai1_clubs/methods.dart';
 
-class editPost extends StatefulWidget {
+class editEvent extends StatefulWidget {
   final reqID;
-  const editPost({super.key, required this.reqID});
+  const editEvent({super.key, required this.reqID});
 
   @override
-  State<editPost> createState() => _editPostState();
+  State<editEvent> createState() => _editEventState();
 }
 
-class _editPostState extends State<editPost> {
+class _editEventState extends State<editEvent> {
   final TextEditingController _captionController = TextEditingController();
 
   bool isLoading = false;
@@ -89,7 +89,7 @@ class _editPostState extends State<editPost> {
 
   Future<int> _listFiles() async {
     int x = 0;
-    final storageRef = FirebaseStorage.instance.ref("posts/");
+    final storageRef = FirebaseStorage.instance.ref("events/");
     final listResult = await storageRef.listAll();
     String ss = listResult.toString();
     print('List result: $listResult');
@@ -120,7 +120,7 @@ class _editPostState extends State<editPost> {
     dynamic uid = _auth.currentUser!.uid;
     String urlDescription = '';
     String urlPic = '';
-    var collection = fire.collection('posts');
+    var collection = fire.collection('events');
     var docSnapshot = await collection.doc(widget.reqID).get();
     if (docSnapshot.exists) {
       Map<String, dynamic>? data = docSnapshot.data();
@@ -166,22 +166,25 @@ class _editPostState extends State<editPost> {
     String v = _captionController.toString();
     try {
       print("caption  :  $v");
-      String postUrl =
-          picUrl != null ? picUrl : await _uploadImg("posts", _image!);
+      String eventUrl =
+          picUrl != null ? picUrl : await _uploadImg("events", _image!);
       String photoUrl = await getPicUrl();
 
-      print("Pic url" + postUrl);
+      print("Pic url" + eventUrl);
 
-      Post postUpload = Post(
+      Event eventUpload = Event(
           description: description,
           uid: uid,
           userName: userName,
-          postId: widget.reqID,
+          eventId: widget.reqID,
           datePublished: datePublished,
           photoURL: photoUrl,
-          postUrl: postUrl);
+          eventUrl: eventUrl);
 
-      fire.collection('posts').doc(postId).update(postUpload.toJson());
+      fire
+          .collection('events')
+          .doc(widget.reqID.toString())
+          .update(eventUpload.toJson());
 
       result = "Successful";
       setState(() {
@@ -215,8 +218,8 @@ class _editPostState extends State<editPost> {
 
   @override
   Widget build(BuildContext context) {
-    String id = widget.reqID;
     provider _userProvider = Provider.of<provider>(context, listen: false);
+    String id = widget.reqID;
     return Scaffold(
       backgroundColor: Colors.white38,
       appBar: AppBar(
@@ -225,17 +228,18 @@ class _editPostState extends State<editPost> {
         centerTitle: false,
       ),
       body: FutureBuilder(
-        future: methods().getPostData(widget.reqID),
+        future: methods().getEventData(widget.reqID),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.none) {
             return Text("Error");
           } else if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
-              Post post = snapshot.data as Post;
+              Event event = snapshot.data as Event;
 
-              final description = TextEditingController(text: post.description);
-              dynamic picUrl = post.postUrl.toString();
+              final description =
+                  TextEditingController(text: event.description);
+              dynamic picUrl = event.eventUrl.toString();
               final postId = id;
 
               return Padding(
@@ -294,9 +298,9 @@ class _editPostState extends State<editPost> {
                                           setState(() {
                                             picUrl == null;
                                             FirebaseFirestore.instance
-                                                .collection('posts')
+                                                .collection('events')
                                                 .doc(postId)
-                                                .set({'postURL': ''});
+                                                .set({'eventtURL': ''});
                                             ShowSnackBarText(
                                                 "Image successfully removed");
                                           });
@@ -345,10 +349,10 @@ class _editPostState extends State<editPost> {
                               _userProvider.getUser.userName,
                               _userProvider.getUser.photoUrl,
                               description.text.trim(),
-                              post.datePublished,
+                              event.datePublished,
                               id,
                               picUrl,
-                              post);
+                              event);
                         },
                         child: const Text(
                           "Update",

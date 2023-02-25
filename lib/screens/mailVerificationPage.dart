@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ai1_clubs/screens/log_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ai1_clubs/screens/registration1.dart';
 
 class mailVerfication extends StatefulWidget {
   final userMap;
@@ -108,8 +109,19 @@ class _mailVerficationState extends State<mailVerfication> {
                     size: 35,
                   )),
               TextButton(
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .delete();
+                  FirebaseAuth.instance.currentUser?.delete();
+
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                    return regScreenOne();
+                  }), (r) {
+                    return false;
+                  });
                 },
                 child: Text(
                   "Cancel",

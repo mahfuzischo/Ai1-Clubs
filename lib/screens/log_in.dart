@@ -213,8 +213,12 @@ class _validFormState extends State<validForm> {
                     var fbaseusr = userCredential.user;
                     print(fbaseusr!.uid);
                     if (fbaseusr.uid.isNotEmpty) {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => home()));
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return home();
+                      }), (r) {
+                        return false;
+                      });
                     } else {
                       print("Invalid uid");
                     }
@@ -259,12 +263,8 @@ class _validFormState extends State<validForm> {
           TextButton(
               child: Text('Create new account'),
               onPressed: () {
-                Navigator.pushAndRemoveUntil(context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                  return regScreenOne();
-                }), (r) {
-                  return false;
-                });
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => regScreenOne()));
               }),
         ]),
       ),
