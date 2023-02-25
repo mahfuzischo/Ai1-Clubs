@@ -77,6 +77,7 @@ class _postSearchedState extends State<postSearched> {
     }
   }
 
+//feb 26
   @override
   Widget build(BuildContext context) {
     return Scaffold(

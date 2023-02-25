@@ -14,6 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+//feb 26
 class eventWidget extends StatefulWidget {
   final snap;
   const eventWidget({

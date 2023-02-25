@@ -17,7 +17,7 @@ class _eventScreenState extends State<eventScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
+//feb 26
     return Scaffold(
       backgroundColor: Colors.grey[700],
       appBar: AppBar(
