@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'mailVerificationPage.dart';
+
 class logIn extends StatefulWidget {
   @override
   State<logIn> createState() => _logInState();
@@ -158,6 +160,7 @@ class _validFormState extends State<validForm> {
                   final FirebaseAuth auth = FirebaseAuth.instance;
                   uemail = _emailController.text.trim();
                   pass = _passController.text.trim();
+
                   print(uemail);
                   print(pass);
                   print(auth);
@@ -165,22 +168,69 @@ class _validFormState extends State<validForm> {
                   try {
                     uemail = _emailController.text.trim();
                     pass = _passController.text.trim();
+
                     UserCredential userCredential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: uemail, password: pass);
-
-                    var fbaseusr = userCredential.user;
-                    print(fbaseusr!.uid);
-                    if (fbaseusr.uid.isNotEmpty) {
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return home();
-                      }), (r) {
-                        return false;
-                      });
+                    User? user = FirebaseAuth.instance.currentUser!;
+                    bool isVerified = user.emailVerified;
+                    if (isVerified == true) {
+                      if (user.uid.isNotEmpty) {
+                        Navigator.pushAndRemoveUntil(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return home();
+                        }), (r) {
+                          return false;
+                        });
+                      } else {
+                        print("Invalid uid");
+                      }
                     } else {
-                      print("Invalid uid");
+                      ShowSnackBarText(
+                          "Email is not verified. Please verify your email first.");
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Email not verified"),
+                              content: Text(
+                                  "Email is not verified. Please verify your email first."),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      Navigator.pushAndRemoveUntil(context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) {
+                                        return mailVerfication(
+                                          user: user.uid,
+                                        );
+                                      }), (r) {
+                                        return false;
+                                      }).then((value) =>
+                                          Navigator.of(context).pop());
+                                    },
+                                    child: Text("Verify")),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      FirebaseAuth.instance.signOut().then(
+                                          (value) =>
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(builder:
+                                                      (BuildContext context) {
+                                                return logIn();
+                                              }), (r) {
+                                                return false;
+                                              }));
+                                    },
+                                    child: Text("Cancel"))
+                              ],
+                            );
+                            //Navigator.of(context).pop(context);
+                          });
                     }
+
+                    print(user!.uid);
                   } on FirebaseAuthException catch (e) {
                     print(e.toString());
                     if (e.code == 'user-not-found') {

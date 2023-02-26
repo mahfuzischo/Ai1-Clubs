@@ -7,8 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ai1_clubs/screens/registration1.dart';
 
 class mailVerfication extends StatefulWidget {
-  final userMap;
-  const mailVerfication({super.key, required this.userMap});
+  final user;
+  const mailVerfication({super.key, required this.user});
 
   @override
   State<mailVerfication> createState() => _mailVerficationState();
@@ -39,7 +39,7 @@ class _mailVerficationState extends State<mailVerfication> {
         resendEmail = false;
       });
 
-      await Future.delayed(Duration(seconds: 8));
+      await Future.delayed(Duration(seconds: 6));
 
       setState(() {
         resendEmail = true;
@@ -59,13 +59,6 @@ class _mailVerficationState extends State<mailVerfication> {
     setState(() {
       isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
-    if (isVerified) {
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set(widget.userMap);
-      timer?.cancel();
-    }
   }
 
   void ShowSnackBarText(String text) {
@@ -110,19 +103,14 @@ class _mailVerficationState extends State<mailVerfication> {
                     size: 35,
                   )),
               TextButton(
-                onPressed: () async {
-                  await FirebaseFirestore.instance
-                      .collection('Users')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .delete();
-                  FirebaseAuth.instance.currentUser?.delete();
-
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return regScreenOne();
-                  }), (r) {
-                    return false;
-                  });
+                onPressed: () {
+                  FirebaseAuth.instance.signOut().then((value) =>
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return logIn();
+                      }), (r) {
+                        return false;
+                      }));
                 },
                 child: Text(
                   "Cancel",

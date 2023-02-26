@@ -167,13 +167,13 @@ class _regScreenTwoState extends State<regScreenTwo> {
                   ? CircleAvatar(
                       radius: 40,
                       backgroundImage: FileImage(img!),
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.grey,
                     )
                   : const CircleAvatar(
                       radius: 64,
                       backgroundImage:
                           NetworkImage('https://i.stack.imgur.com/l60Hf.png'),
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.grey,
                     ),
               Positioned(
                 bottom: -10,
@@ -379,9 +379,10 @@ class _regScreenTwoState extends State<regScreenTwo> {
                             ),
                           ),
                           onPressed: () async {
-                            _uemail = email.text.trim();
+                            // _uemail = email.text.trim();
+                            _uemail = student.email.toString().trim();
                             _pass = _passController.text.trim();
-                            _uname = name.text;
+                            // _uname = name.text;
                             if (_formKey.currentState != null) {
                               if (_formKey.currentState!.validate() != false) {
                                 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -390,7 +391,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                 try {
                                   UserCredential userCredential = await _auth
                                       .createUserWithEmailAndPassword(
-                                    email: student.email,
+                                    email: _uemail,
                                     password: _pass,
                                   );
 
@@ -400,10 +401,6 @@ class _regScreenTwoState extends State<regScreenTwo> {
 
                                   User? _user = _auth.currentUser;
                                   String? photoUrl = await uploadImg(img!);
-                                  if (photoUrl == null) {
-                                    photoUrl =
-                                        'https://i.stack.imgur.com/l60Hf.png';
-                                  }
 
                                   var _userMap = {
                                     'uid': _user!.uid,
@@ -412,14 +409,19 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                     'batch': _batch,
                                     'dept': _dept,
                                     'student_id': widget.reqId,
-                                    'photoURL': photoUrl
+                                    'photoURL': photoUrl == null
+                                        ? 'https://i.stack.imgur.com/l60Hf.png'
+                                        : photoUrl,
                                   };
-                                  print({_userMap});
 
-                                  // await _firebaseFirestore
-                                  //     .collection('Users')
-                                  //     .doc(_user.uid)
-                                  //     .set(_userMap);
+                                  await _firebaseFirestore
+                                      .collection('Users')
+                                      .doc(_user.uid)
+                                      .set(_userMap);
+                                  await _firebaseFirestore
+                                      .collection('mailUsers')
+                                      .doc(_user.email)
+                                      .set({'uid': _user.uid});
 
                                   // print(_uname);
                                   // print(_uemail);
@@ -429,7 +431,7 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                       MaterialPageRoute(
                                           builder: (BuildContext context) {
                                     return mailVerfication(
-                                      userMap: _userMap,
+                                      user: _user.uid,
                                     );
                                   }), (r) {
                                     return false;

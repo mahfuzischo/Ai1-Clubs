@@ -80,8 +80,8 @@ class _homeState extends State<home> {
   void initState() {
     super.initState();
     addData();
-    getLuccUser();
     getAdmin();
+    getLuccUser();
   }
 
   addData() async {
