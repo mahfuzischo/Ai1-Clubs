@@ -116,7 +116,7 @@ class _regScreen1State extends State<regScreenOne> {
                 ),
               ),
               onPressed: () async {
-                bool sValid = await getValid(_idController.text.trim());
+                bool isValid = await getValid(_idController.text.trim());
                 if (isValid == true) {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => regScreenTwo(

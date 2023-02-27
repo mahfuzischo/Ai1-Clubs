@@ -32,20 +32,6 @@ final FirebaseFirestore fire = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final FirebaseStorage _storage = FirebaseStorage.instance;
 
-Future<String> uploadImg(File file) async {
-  String _picname = const Uuid().v1();
-  Reference ref = _storage
-      .ref()
-      .child("profiles")
-      .child(_auth.currentUser!.uid)
-      .child(_picname);
-  UploadTask uploadTask = ref.putFile(file);
-  TaskSnapshot snap = await uploadTask;
-  String dldURL = await snap.ref.getDownloadURL();
-  print("photourl:" + dldURL);
-  return dldURL;
-}
-
 class _regScreenTwoState extends State<regScreenTwo> {
   void ShowSnackBarText(String text) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -202,6 +188,21 @@ class _regScreenTwoState extends State<regScreenTwo> {
                     final batch = TextEditingController(text: student.batch);
                     final dept = TextEditingController(text: student.dept);
                     final id = TextEditingController(text: student.id);
+                    Future<String> uploadImg(File file) async {
+                      String _picname = const Uuid().v1();
+                      Reference ref = _storage
+                          .ref()
+                          .child("profiles")
+                          .child(_auth.currentUser!.uid)
+                          .child(_picname);
+                      UploadTask uploadTask = ref.putFile(file);
+                      TaskSnapshot snap = await uploadTask;
+                      String dldURL =
+                          await snap.ref.getDownloadURL().toString();
+                      print("photourl:" + dldURL);
+                      return dldURL;
+                    }
+
                     print(student.name.toString());
                     return Form(
                       key: _formKey,
@@ -234,7 +235,8 @@ class _regScreenTwoState extends State<regScreenTwo> {
                             validator: (value) {
                               if (value != null) {
                                 final RegExp regex = RegExp(
-                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)| (\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
                                 if (!regex.hasMatch(value!)) {
                                   return 'Enter a valid email';
                                 } else
@@ -382,24 +384,28 @@ class _regScreenTwoState extends State<regScreenTwo> {
                             // _uemail = email.text.trim();
                             _uemail = student.email.toString().trim();
                             _pass = _passController.text.trim();
+                            print("mail" + _uemail);
                             // _uname = name.text;
                             if (_formKey.currentState != null) {
                               if (_formKey.currentState!.validate() != false) {
                                 FirebaseAuth _auth = FirebaseAuth.instance;
                                 FirebaseFirestore _firebaseFirestore =
                                     FirebaseFirestore.instance;
+                                print("Crating user");
                                 try {
-                                  UserCredential userCredential = await _auth
-                                      .createUserWithEmailAndPassword(
+                                  UserCredential userCredential =
+                                      await FirebaseAuth.instance
+                                          .createUserWithEmailAndPassword(
                                     email: _uemail,
                                     password: _pass,
                                   );
 
-                                  print(_uname);
-                                  print(_uemail);
-                                  print(_pass);
+                                  print("account created");
 
                                   User? _user = _auth.currentUser;
+                                  if (img == null) {
+                                    print("Image is null");
+                                  }
                                   String? photoUrl = await uploadImg(img!);
 
                                   var _userMap = {
@@ -409,23 +415,13 @@ class _regScreenTwoState extends State<regScreenTwo> {
                                     'batch': _batch,
                                     'dept': _dept,
                                     'student_id': widget.reqId,
-                                    'photoURL': photoUrl == null
-                                        ? 'https://i.stack.imgur.com/l60Hf.png'
-                                        : photoUrl,
+                                    'photoURL': photoUrl,
                                   };
 
                                   await _firebaseFirestore
                                       .collection('Users')
                                       .doc(_user.uid)
                                       .set(_userMap);
-                                  await _firebaseFirestore
-                                      .collection('mailUsers')
-                                      .doc(_user.email)
-                                      .set({'uid': _user.uid});
-
-                                  // print(_uname);
-                                  // print(_uemail);
-                                  // print(_pass);
 
                                   Navigator.pushAndRemoveUntil(context,
                                       MaterialPageRoute(

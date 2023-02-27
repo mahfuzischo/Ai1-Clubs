@@ -1,5 +1,4 @@
 // import 'package:ai1_clubs/screens/log_in.dart';
-// import 'package:ai1_clubs/screens/phoneReg.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 // import 'dart:io';
@@ -456,16 +455,6 @@
 //           SizedBox(
 //             height: 20,
 //           ),
-//           TextButton(
-//               child: Text('Register with phone number'),
-//               onPressed: () {
-//                 Navigator.pushAndRemoveUntil(context,
-//                     MaterialPageRoute(builder: (BuildContext context) {
-//                   return registration_Phn();
-//                 }), (r) {
-//                   return false;
-//                 });
-//               }),
 //           SizedBox(
 //             height: 20,
 //           ),

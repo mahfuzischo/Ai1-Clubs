@@ -24,9 +24,13 @@ class requestWidget extends StatelessWidget {
     String res = "Some error occurred";
     try {
       await FirebaseFirestore.instance
-          .collection('requests')
+          .collection('usersLucc')
           .doc(reqId)
           .set({'uid': reqId});
+      await FirebaseFirestore.instance
+          .collection('requests')
+          .doc(reqId)
+          .delete();
       res = 'success';
     } catch (e) {
       res = e.toString();
@@ -61,9 +65,6 @@ class requestWidget extends StatelessWidget {
                             ElevatedButton(
                                 onPressed: () async {
                                   await allowReq(
-                                    snap.data()['uid'].toString(),
-                                  );
-                                  await deleteReq(
                                     snap.data()['uid'].toString(),
                                   );
                                   Navigator.of(context).pop();
