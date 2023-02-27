@@ -85,6 +85,12 @@ flutter:
     - images/lusc.jpg
     - images/bannedCommunity.jpg
     - images/logo.jpg
+    - images/a1.jpg
+    - images/a2.jpg
+    - images/a3.jpg
+    - images/a4.jpg
+    - images/a5.jpg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

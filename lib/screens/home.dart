@@ -225,11 +225,7 @@ class _homeState extends State<home> {
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: InkWell(
-                  onTap: () {
-                    // Navigator.of(context).push(
-                    //     MaterialPageRoute(builder: (context) => LUCC_Home()
-                    //     ));
-                  },
+                  onTap: () {},
                   splashColor: Colors.blue,
                   child: Ink.image(
                       fit: BoxFit.cover,
@@ -255,6 +251,86 @@ class _homeState extends State<home> {
                       width: 50,
                       height: 50,
                       image: AssetImage('images/bannedCommunity.jpg')),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.blue,
+                  child: Ink.image(
+                      fit: BoxFit.cover,
+                      width: 50,
+                      height: 50,
+                      image: AssetImage('images/a1.jpg')),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.blue,
+                  child: Ink.image(
+                      fit: BoxFit.cover,
+                      width: 50,
+                      height: 50,
+                      image: AssetImage('images/a2.jpg')),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.blue,
+                  child: Ink.image(
+                      fit: BoxFit.cover,
+                      width: 50,
+                      height: 50,
+                      image: AssetImage('images/a3.jpg')),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.blue,
+                  child: Ink.image(
+                      fit: BoxFit.cover,
+                      width: 50,
+                      height: 50,
+                      image: AssetImage('images/a4.jpg')),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: InkWell(
+                  onTap: () {},
+                  splashColor: Colors.blue,
+                  child: Ink.image(
+                      fit: BoxFit.cover,
+                      width: 50,
+                      height: 50,
+                      image: AssetImage('images/a5.jpg')),
                 ),
               ),
             )
